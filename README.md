@@ -1,16 +1,85 @@
-# React + Vite
+# SynergyHR — Premium HR Portal & Administration Suite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+SynergyHR is a modern, high-fidelity, and feature-rich Human Resources Portal and Dashboard system designed to streamline organization management, recruitment workflows, payroll tracking, and attendance logs. 
 
-Currently, two official plugins are available:
+Built with **React**, **Vite**, **Tailwind CSS**, and **Recharts**, the application features a polished dark-accented sidebar navigation, responsive layouts, interactive statistics dashboards, and elegant hover animations.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## ✨ Features Overview
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The workspace contains dedicated panels for key HR operations, organized into logical modules:
 
-## Expanding the ESLint configuration
+### 👥 Staff Management
+*   **Employee Directory:** Searchable directory displaying active/inactive employees, roles, departments, and emails.
+*   **Onboarding Tracker:** Status board tracking document submission, training, and setup for new hires.
+*   **Offboarding Tracker:** Safe-exit checklist for departing team members (asset return, IT access revocation).
+*   **Team Hub:** Overview of company departments, team structures, and active leads.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### ⏱️ Attendance & Scheduling
+*   **Attendance Dashboard:** Interactive graphs displaying average daily attendance, late arrivals, and absence trends.
+*   **Attendance Log:** Searchable and filterable history of employee check-in/out times.
+*   **Shift Planner:** Shift schedule overview, shift swaps, and roster configuration.
+*   **Overtime & Leaves:** Portal to approve/reject overtime applications and annual/sick leave requests.
+
+### 🎯 Recruitment & Talent Acquisition
+*   **Recruitment Dashboard:** Stats on active openings, application volume, and recruitment cost-per-hire.
+*   **Candidate Pipeline:** Kanban-style pipeline tracking candidate progress (Applied, Screened, Interviewed, Offered, Hired).
+*   **Interviews Schedule:** Calendar view showing upcoming panel interviews, times, and interviewers.
+*   **Offer Letters:** Overview of sent, signed, and pending job offer sheets.
+
+### 💰 Payroll & Compensation
+*   **Payroll Dashboard:** Visual graphs of month-over-month salary expenses, tax withholdings, and benefits.
+*   **Salary Structure:** Component definitions (basic, allowances, deductions) and payroll calculator tools.
+
+---
+
+## 🛠️ Technology Stack
+
+*   **Frontend Core:** React 19, JavaScript (ES6+)
+*   **Build Tooling & Bundler:** Vite 8 (with fast Hot Module Replacement)
+*   **Styling System:** Tailwind CSS v4 (native `@tailwindcss/vite` integration)
+*   **Data Visualization:** Recharts (responsive bar, area, line, and pie charts)
+*   **Icons & Assets:** Lucide React (vector-based icon kit)
+*   **Linter:** ESLint 10
+
+---
+
+## 🚀 Getting Started
+
+### 📋 Prerequisites
+Ensure you have **Node.js** (v18 or higher recommended) and **npm** installed.
+
+### 💻 Local Installation
+1. Clone this repository to your local machine:
+   ```bash
+   git clone <repository-url>
+   cd new-hr-portal-design
+   ```
+2. Install the package dependencies:
+   ```bash
+   npm install
+   ```
+
+### 🏃‍♂️ Running the App
+*   **Development Server:** Start the Vite dev server with HMR:
+    ```bash
+    npm run dev
+    ```
+    Open your browser and navigate to `http://localhost:5173` (or the URL shown in your terminal).
+
+*   **Production Build:** Compile and minify the application for production deployment:
+    ```bash
+    npm run build
+    ```
+    This generates optimized static files in the `/dist` directory.
+
+*   **Preview Production:** Preview the built production assets locally:
+    ```bash
+    npm run preview
+    ```
+
+*   **Linter Check:** Run ESLint checks to scan for code issues:
+    ```bash
+    npm run lint
+    ```
