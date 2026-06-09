@@ -153,17 +153,17 @@ export default function Team() {
             <div className="space-y-6 max-w-4xl">
               
               {/* 4A. Team Task KPI Block */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid">
                 <TaskCard title="Total Tasks" value="0" icon={<LayoutGrid size={18} />} color="text-slate-700" />
                 <TaskCard title="Completed" value="0" icon={<CheckCircle2 size={18} />} color="text-emerald-600" />
                 <TaskCard title="Active" value="0" icon={<Circle size={18} />} color="text-primary" />
                 <TaskCard title="Overdue" value="0" icon={<AlertCircle size={18} />} color="text-rose-600" />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid">
                 
                 {/* 4B. Team Progress Module */}
-                <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-center">
+                <div className="panel">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="font-bold text-slate-900">Task Progress</h3>
                     <span className="text-3xl font-bold text-slate-900">0%</span>
@@ -180,7 +180,7 @@ export default function Team() {
                 </div>
 
                 {/* 4C. Team Members Directory Module */}
-                <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                <div className="panel">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="font-bold text-slate-900">Team Members</h3>
                     <button className="text-primary text-sm font-medium hover:underline">View all</button>
@@ -221,7 +221,7 @@ export default function Team() {
 
 function TaskCard({ title, value, icon, color }) {
   return (
-    <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between h-28 group hover:bg-gradient-to-br hover:from-primary hover:to-blue-950 transition-all duration-300 cursor-pointer border-transparent hover:border-transparent hover:shadow-md">
+    <div className="panel">
       <div className={`flex items-center gap-2 ${color} mb-2`}>
         {icon}
         <span className="text-xs font-bold uppercase tracking-wide">{title}</span>

@@ -105,52 +105,54 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-[#f8fafc] text-slate-900 font-sans overflow-hidden">
-      
-      <Topbar 
+    <div className="app">
+      <Sidebar 
+        currentPage={currentPage} 
         setCurrentPage={navigateToPage} 
-        notifications={notifications} 
-        markAllNotificationsAsRead={markAllNotificationsAsRead} 
-        markNotificationAsRead={markNotificationAsRead} 
+        activeDropdown={activeDropdown} 
+        toggleDropdown={toggleDropdown} 
       />
 
-      <div className="flex-1 flex overflow-hidden">
-        <Sidebar 
-          currentPage={currentPage} 
+      <div className="main">
+        <Topbar 
+          currentPage={currentPage}
           setCurrentPage={navigateToPage} 
-          activeDropdown={activeDropdown} 
-          toggleDropdown={toggleDropdown} 
+          notifications={notifications} 
+          markAllNotificationsAsRead={markAllNotificationsAsRead} 
+          markNotificationAsRead={markNotificationAsRead} 
         />
 
-        <main className="flex-1 overflow-y-auto p-4 lg:p-8">
-          {currentPage === 'dashboard' && <Dashboard setCurrentPage={navigateToPage} setDirectoryView={setDirectoryView} />}
-          {currentPage === 'employee-directory' && <EmployeeDirectory view={directoryView} setView={setDirectoryView} />}
-          {currentPage === 'onboarding' && <Onboarding />}
-          {currentPage === 'offboarding' && <Offboarding />}
-          {currentPage === 'team' && <Team />}
-          {currentPage === 'attendance-dashboard' && <AttendanceDashboard />}
-          {currentPage === 'attendance-log' && <AttendanceLog />}
-          {currentPage === 'shift' && <Shift />}
-          {currentPage === 'overtime' && <Overtime />}
-          {currentPage === 'leave' && <Leave />}
-          {currentPage === 'recruitment-dashboard' && <RecruitmentDashboard />}
-          {currentPage === 'candidate-pipeline' && <CandidatePipeline />}
-          {currentPage === 'interviews' && <Interviews />}
-          {currentPage === 'offer-letters' && <OfferLetters />}
-          {currentPage === 'payroll-dashboard' && <PayrollDashboard />}
-          {currentPage === 'salary-structure' && <SalaryStructure />}
-          {currentPage === 'notifications' && (
-            <Notifications 
-              notifications={notifications} 
-              markAllNotificationsAsRead={markAllNotificationsAsRead} 
-              markNotificationAsRead={markNotificationAsRead}
-              deleteNotification={deleteNotification}
-            />
-          )}
-          {currentPage === 'settings' && <Settings />}
-          {currentPage === 'profile' && <Profile />}
-          {currentPage === 'help' && <Help />}
-        </main>
+        <div className="content" id="content">
+          <div className="view active">
+            {currentPage === 'dashboard' && <Dashboard setCurrentPage={navigateToPage} setDirectoryView={setDirectoryView} />}
+            {currentPage === 'employee-directory' && <EmployeeDirectory view={directoryView} setView={setDirectoryView} />}
+            {currentPage === 'onboarding' && <Onboarding />}
+            {currentPage === 'offboarding' && <Offboarding />}
+            {currentPage === 'team' && <Team />}
+            {currentPage === 'attendance-dashboard' && <AttendanceDashboard />}
+            {currentPage === 'attendance-log' && <AttendanceLog />}
+            {currentPage === 'shift' && <Shift />}
+            {currentPage === 'overtime' && <Overtime />}
+            {currentPage === 'leave' && <Leave />}
+            {currentPage === 'recruitment-dashboard' && <RecruitmentDashboard />}
+            {currentPage === 'candidate-pipeline' && <CandidatePipeline />}
+            {currentPage === 'interviews' && <Interviews />}
+            {currentPage === 'offer-letters' && <OfferLetters />}
+            {currentPage === 'payroll-dashboard' && <PayrollDashboard />}
+            {currentPage === 'salary-structure' && <SalaryStructure />}
+            {currentPage === 'notifications' && (
+              <Notifications 
+                notifications={notifications} 
+                markAllNotificationsAsRead={markAllNotificationsAsRead} 
+                markNotificationAsRead={markNotificationAsRead}
+                deleteNotification={deleteNotification}
+              />
+            )}
+            {currentPage === 'settings' && <Settings />}
+            {currentPage === 'profile' && <Profile />}
+            {currentPage === 'help' && <Help />}
+          </div>
+        </div>
       </div>
 
       <MobileNav currentPage={currentPage} setCurrentPage={navigateToPage} />

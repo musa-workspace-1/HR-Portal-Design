@@ -1,189 +1,120 @@
 import React from 'react';
-import { Home, Users, Clock, Briefcase, DollarSign, ChevronDown } from 'lucide-react';
+import Icon from './Icon';
 
 export default function Sidebar({ currentPage, setCurrentPage, activeDropdown, toggleDropdown }) {
   return (
-    <aside className="hidden lg:flex flex-col w-60 bg-white border-r border-slate-100 flex-shrink-0 z-20 shadow-sm pt-2">
-
-      <div className="px-4 py-3 flex flex-col items-center border-b border-slate-100">
-        <img src="/shah_zaib_avatar.png" alt="Shah Zaib Kazmi" className="w-14 h-14 rounded-full object-cover border-2 border-white shadow-md mb-1.5" />
-        <h3 className="font-bold text-slate-900 text-sm">Shah Zaib Kazmi</h3>
-        <p className="text-[10px] text-slate-500 font-medium">HR Manager</p>
+    <aside className="sidebar">
+      <div className="brand">
+        <div className="logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.1" strokeLinecap="round">
+            <path d="M4.5 12c0-2 1.6-3.6 3.6-3.6 1.6 0 2.6 1.1 3.4 2.5l1 1.8c.8 1.4 1.8 2.5 3.4 2.5 2 0 3.6-1.6 3.6-3.6S21.4 8 19.4 8c-1.6 0-2.6 1.1-3.4 2.5l-1 1.8C14.2 13.7 13.2 14.8 11.6 14.8 9.6 14.8 8 13.2 8 11.2"/>
+          </svg>
+        </div>
+        <h1>24 loops</h1>
       </div>
-
-      <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+      
+      <div className="nav-scroll">
+        <div className="nav-label">Main Menu</div>
         <NavItem 
-          icon={<Home size={20} />} 
+          icon="dashboard" 
           label="Dashboard" 
           active={currentPage === 'dashboard'} 
           onClick={() => { setCurrentPage('dashboard'); toggleDropdown(null); }} 
         />
-        
-        <div className="flex flex-col">
-          <button 
-            onClick={() => toggleDropdown('staff')}
-            className={`flex items-center justify-between w-full px-3 py-2.5 rounded-xl transition-colors ${['employee-directory', 'onboarding', 'offboarding', 'team'].includes(currentPage) ? 'bg-primary/5 text-primary' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
-          >
-            <div className="flex items-center gap-3">
-              <span className={['employee-directory', 'onboarding', 'offboarding', 'team'].includes(currentPage) ? 'text-primary' : 'text-slate-400'}><Users size={20} /></span>
-              <span className={`text-sm ${['employee-directory', 'onboarding', 'offboarding', 'team'].includes(currentPage) ? 'font-semibold' : ''}`}>Staff & Lifecycle</span>
-            </div>
-            <ChevronDown size={16} className={`transition-transform duration-200 ${activeDropdown === 'staff' ? 'rotate-180' : ''}`} />
-          </button>
-          
-          {activeDropdown === 'staff' && (
-            <div className="mt-1 ml-4 border-l-2 border-slate-100 pl-3 flex flex-col gap-1">
-              <SubNavItem 
-                label="Employee Directory" 
-                active={currentPage === 'employee-directory'} 
-                onClick={() => setCurrentPage('employee-directory')} 
-              />
-              <SubNavItem 
-                label="Onboarding" 
-                active={currentPage === 'onboarding'} 
-                onClick={() => setCurrentPage('onboarding')} 
-              />
-              <SubNavItem 
-                label="Offboarding" 
-                active={currentPage === 'offboarding'} 
-                onClick={() => setCurrentPage('offboarding')} 
-              />
-              <SubNavItem 
-                label="Team" 
-                active={currentPage === 'team'} 
-                onClick={() => setCurrentPage('team')} 
-              />
-            </div>
-          )}
-        </div>
+        <NavItem 
+          icon="employees" 
+          label="Employees" 
+          active={currentPage === 'employee-directory' || currentPage === 'team'} 
+          onClick={() => { setCurrentPage('employee-directory'); toggleDropdown('staff'); }} 
+        />
+        <NavItem 
+          icon="attendance" 
+          label="Attendance" 
+          active={currentPage === 'attendance-dashboard' || currentPage === 'attendance-log' || currentPage === 'shift' || currentPage === 'overtime'} 
+          onClick={() => { setCurrentPage('attendance-dashboard'); toggleDropdown('time'); }} 
+        />
+        <NavItem 
+          icon="leave" 
+          label={<span>Leave <span className="badge">3</span></span>}
+          active={currentPage === 'leave'} 
+          onClick={() => { setCurrentPage('leave'); toggleDropdown('time'); }} 
+        />
+        <NavItem 
+          icon="spark" 
+          label={<span>AI Hub <span className="ai-badge">AI</span></span>}
+          active={currentPage === 'aihub'} 
+          onClick={() => { setCurrentPage('aihub'); toggleDropdown(null); }} 
+        />
 
-        <div className="flex flex-col">
-          <button 
-            onClick={() => toggleDropdown('time')}
-            className={`flex items-center justify-between w-full px-3 py-2.5 rounded-xl transition-colors ${['attendance-dashboard', 'attendance-log', 'shift', 'overtime', 'leave'].includes(currentPage) ? 'bg-primary/5 text-primary' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
-          >
-            <div className="flex items-center gap-3">
-              <span className={['attendance-dashboard', 'attendance-log', 'shift', 'overtime', 'leave'].includes(currentPage) ? 'text-primary' : 'text-slate-400'}><Clock size={20} /></span>
-              <span className={`text-sm ${['attendance-dashboard', 'attendance-log', 'shift', 'overtime', 'leave'].includes(currentPage) ? 'font-semibold' : ''}`}>Time & Attendance</span>
-            </div>
-            <ChevronDown size={16} className={`transition-transform duration-200 ${activeDropdown === 'time' ? 'rotate-180' : ''}`} />
-          </button>
-          
-          {activeDropdown === 'time' && (
-            <div className="mt-1 ml-4 border-l-2 border-slate-100 pl-3 flex flex-col gap-1">
-              <SubNavItem 
-                label="Attendance Dashboard" 
-                active={currentPage === 'attendance-dashboard'} 
-                onClick={() => setCurrentPage('attendance-dashboard')} 
-              />
-              <SubNavItem 
-                label="Attendance Log" 
-                active={currentPage === 'attendance-log'} 
-                onClick={() => setCurrentPage('attendance-log')} 
-              />
-              <SubNavItem 
-                label="Shift" 
-                active={currentPage === 'shift'} 
-                onClick={() => setCurrentPage('shift')} 
-              />
-              <SubNavItem 
-                label="Overtime" 
-                active={currentPage === 'overtime'} 
-                onClick={() => setCurrentPage('overtime')} 
-              />
-              <SubNavItem 
-                label="Leave" 
-                active={currentPage === 'leave'} 
-                onClick={() => setCurrentPage('leave')} 
-              />
-            </div>
-          )}
-        </div>
+        <div className="nav-label">Team Management</div>
+        <NavItem 
+          icon="recruitment" 
+          label="Recruitment" 
+          active={currentPage === 'recruitment-dashboard' || currentPage === 'candidate-pipeline' || currentPage === 'interviews' || currentPage === 'offer-letters'} 
+          onClick={() => { setCurrentPage('recruitment-dashboard'); toggleDropdown('hiring'); }} 
+        />
+        <NavItem 
+          icon="onboarding" 
+          label="Onboarding" 
+          active={currentPage === 'onboarding' || currentPage === 'offboarding'} 
+          onClick={() => { setCurrentPage('onboarding'); toggleDropdown('staff'); }} 
+        />
+        <NavItem 
+          icon="performance" 
+          label="Performance" 
+          active={currentPage === 'performance'} 
+          onClick={() => { setCurrentPage('performance'); toggleDropdown(null); }} 
+        />
+        <NavItem 
+          icon="payroll" 
+          label="Payroll" 
+          active={currentPage === 'payroll-dashboard' || currentPage === 'salary-structure'} 
+          onClick={() => { setCurrentPage('payroll-dashboard'); toggleDropdown('payroll'); }} 
+        />
+        <NavItem 
+          icon="expenses" 
+          label="Expenses" 
+          active={currentPage === 'expenses'} 
+          onClick={() => { setCurrentPage('expenses'); toggleDropdown(null); }} 
+        />
 
-        <div className="flex flex-col">
-          <button 
-            onClick={() => toggleDropdown('hiring')}
-            className={`flex items-center justify-between w-full px-3 py-2.5 rounded-xl transition-colors ${['recruitment-dashboard', 'candidate-pipeline', 'interviews', 'offer-letters'].includes(currentPage) ? 'bg-primary/5 text-primary' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
-          >
-            <div className="flex items-center gap-3">
-              <span className={['recruitment-dashboard', 'candidate-pipeline', 'interviews', 'offer-letters'].includes(currentPage) ? 'text-primary' : 'text-slate-400'}><Briefcase size={20} /></span>
-              <span className={`text-sm ${['recruitment-dashboard', 'candidate-pipeline', 'interviews', 'offer-letters'].includes(currentPage) ? 'font-semibold' : ''}`}>Hiring</span>
-            </div>
-            <ChevronDown size={16} className={`transition-transform duration-200 ${activeDropdown === 'hiring' ? 'rotate-180' : ''}`} />
-          </button>
-          
-          {activeDropdown === 'hiring' && (
-            <div className="mt-1 ml-4 border-l-2 border-slate-100 pl-3 flex flex-col gap-1">
-              <SubNavItem 
-                label="Recruitment Dashboard" 
-                active={currentPage === 'recruitment-dashboard'} 
-                onClick={() => setCurrentPage('recruitment-dashboard')} 
-              />
-              <SubNavItem 
-                label="Candidate Pipeline" 
-                active={currentPage === 'candidate-pipeline'} 
-                onClick={() => setCurrentPage('candidate-pipeline')} 
-              />
-              <SubNavItem 
-                label="Interviews" 
-                active={currentPage === 'interviews'} 
-                onClick={() => setCurrentPage('interviews')} 
-              />
-              <SubNavItem 
-                label="Offer Letters" 
-                active={currentPage === 'offer-letters'} 
-                onClick={() => setCurrentPage('offer-letters')} 
-              />
-            </div>
-          )}
-        </div>
+        <div className="nav-label">Workspace</div>
+        <NavItem 
+          icon="documents" 
+          label="Documents" 
+          active={currentPage === 'documents'} 
+          onClick={() => { setCurrentPage('documents'); toggleDropdown(null); }} 
+        />
+        <NavItem 
+          icon="announcements" 
+          label="Announcements" 
+          active={currentPage === 'announcements'} 
+          onClick={() => { setCurrentPage('announcements'); toggleDropdown(null); }} 
+        />
+        <NavItem 
+          icon="settings" 
+          label="Settings" 
+          active={currentPage === 'settings' || currentPage === 'profile'} 
+          onClick={() => { setCurrentPage('settings'); toggleDropdown(null); }} 
+        />
+      </div>
 
-        <div className="flex flex-col">
-          <button 
-            onClick={() => toggleDropdown('payroll')}
-            className={`flex items-center justify-between w-full px-3 py-2.5 rounded-xl transition-colors ${['payroll-dashboard', 'salary-structure'].includes(currentPage) ? 'bg-primary/5 text-primary' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
-          >
-            <div className="flex items-center gap-3">
-              <span className={['payroll-dashboard', 'salary-structure'].includes(currentPage) ? 'text-primary' : 'text-slate-400'}><DollarSign size={20} /></span>
-              <span className={`text-sm ${['payroll-dashboard', 'salary-structure'].includes(currentPage) ? 'font-semibold' : ''}`}>Payroll</span>
-            </div>
-            <ChevronDown size={16} className={`transition-transform duration-200 ${activeDropdown === 'payroll' ? 'rotate-180' : ''}`} />
-          </button>
-          
-          {activeDropdown === 'payroll' && (
-            <div className="mt-1 ml-4 border-l-2 border-slate-100 pl-3 flex flex-col gap-1">
-              <SubNavItem 
-                label="Payroll Dashboard" 
-                active={currentPage === 'payroll-dashboard'} 
-                onClick={() => setCurrentPage('payroll-dashboard')} 
-              />
-              <SubNavItem 
-                label="Salary Structure" 
-                active={currentPage === 'salary-structure'} 
-                onClick={() => setCurrentPage('salary-structure')} 
-              />
-            </div>
-          )}
+      <div className="side-foot">
+        <div className="ai-promo">
+          <div className="spark">✦</div>
+          <h4>Loop AI Assistant</h4>
+          <p>Just chat — Loop AI can add people, book leave & more.</p>
+          <button>Open Assistant</button>
         </div>
-      </nav>
-
+      </div>
     </aside>
   );
 }
 
 function NavItem({ icon, label, active, onClick }) {
   return (
-    <button onClick={onClick} className={`flex items-center w-full gap-3 px-3 py-2.5 rounded-xl transition-colors ${active ? 'bg-primary/10 text-primary font-semibold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}>
-      <span className={active ? 'text-primary' : 'text-slate-400'}>{icon}</span>
-      <span className="text-sm">{label}</span>
-    </button>
-  );
-}
-
-function SubNavItem({ label, active, onClick }) {
-  return (
-    <button onClick={onClick} className={`text-left w-full px-3 py-2 rounded-lg text-sm transition-colors ${active ? 'bg-primary/10 text-primary font-semibold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'}`}>
-      {label}
-    </button>
+    <div className={`nav-item ${active ? 'active' : ''}`} onClick={onClick}>
+      <Icon name={icon} /> {label}
+    </div>
   );
 }

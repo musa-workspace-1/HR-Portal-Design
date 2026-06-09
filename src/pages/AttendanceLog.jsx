@@ -55,16 +55,16 @@ export default function AttendanceLog() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6 pb-24 lg:pb-0">
+    <div className="stagger">
       
       {/* 1. Page Title & Action Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="sec-head">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Attendance Log</h1>
           <p className="text-sm text-slate-500 mt-1">Track and manage daily attendance records for all employees.</p>
         </div>
         <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors shadow-sm">
+          <button className="btn ghost">
             <Download size={16} />
             Export Report
           </button>
@@ -72,7 +72,7 @@ export default function AttendanceLog() {
       </div>
 
       {/* 3. Attendance Ledger Table Container */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col">
+      <div className="panel">
         
         {/* 2. Advanced Filtering Control Bar */}
         <div className="p-4 border-b border-slate-100 flex flex-col lg:flex-row gap-4 items-center justify-between bg-slate-50/30">
@@ -135,7 +135,7 @@ export default function AttendanceLog() {
         {/* 3. Ledger Table Content */}
         <div className="w-full">
           <table className="w-full text-left text-sm text-slate-600">
-            <thead className="bg-slate-50/50 text-slate-500 font-medium text-xs uppercase tracking-wider border-b border-slate-100">
+            <thead >
               <tr>
                 <th className="px-4 py-3">Name</th>
                 <th className="px-4 py-3">Date</th>

@@ -73,7 +73,7 @@ export default function Help() {
   ];
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 pb-24 lg:pb-0 relative">
+    <div className="stagger">
       
       {/* Toast Alert */}
       {showToast && (
@@ -133,7 +133,7 @@ export default function Help() {
       </div>
 
       {/* 2. Knowledge Base Categories */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
         <CategoryCard 
           icon={<BookOpen size={24} />} 
           title="Member Guide" 
@@ -161,7 +161,7 @@ export default function Help() {
       </div>
 
       {/* 3. Curated Documentation */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <div className="grid">
         
         {/* Popular Articles */}
         <div className="lg:col-span-6 space-y-4">
@@ -269,7 +269,7 @@ export default function Help() {
       <div className="border-t border-slate-100 pt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-slate-400 font-medium">
         <span>&copy; 2026 24Loops HR. All rights reserved.</span>
         
-        <div className="grid grid-cols-2 sm:flex sm:items-center gap-x-6 gap-y-3">
+        <div className="grid">
           <a href="#tutorials" onClick={(e) => { e.preventDefault(); triggerToast('Redirecting to Video Tutorials...'); }} className="flex items-center gap-1.5 hover:text-primary transition-colors">
             <Video size={14} />
             <span>Video Tutorials</span>

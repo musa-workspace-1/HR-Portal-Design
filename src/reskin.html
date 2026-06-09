@@ -1,0 +1,575 @@
+
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round"><path d="M4.5 12c0-2 1.6-3.6 3.6-3.6 1.6 0 2.6 1.1 3.4 2.5l1 1.8c.8 1.4 1.8 2.5 3.4 2.5 2 0 3.6-1.6 3.6-3.6S21.4 8 19.4 8c-1.6 0-2.6 1.1-3.4 2.5l-1 1.8C14.2 13.7 13.2 14.8 11.6 14.8 9.6 14.8 8 13.2 8 11.2"/></svg></div><h1>24 loops</h1></div>
+    <div class="nav-scroll">
+      <div class="nav-label">Main Menu</div>
+      <div class="nav-item active" data-view="dashboard"><i data-i="dashboard"></i> Dashboard</div>
+      <div class="nav-item" data-view="employees"><i data-i="employees"></i> Employees</div>
+      <div class="nav-item" data-view="attendance"><i data-i="attendance"></i> Attendance</div>
+      <div class="nav-item" data-view="leave"><i data-i="leave"></i> Leave <span class="badge">3</span></div>
+      <div class="nav-item" data-view="aihub"><i data-i="spark"></i> AI Hub <span class="ai-badge">AI</span></div>
+      <div class="nav-label">Team Management</div>
+      <div class="nav-item" data-view="recruitment"><i data-i="recruitment"></i> Recruitment</div>
+      <div class="nav-item" data-view="onboarding"><i data-i="onboarding"></i> Onboarding</div>
+      <div class="nav-item" data-view="performance"><i data-i="performance"></i> Performance</div>
+      <div class="nav-item" data-view="payroll"><i data-i="payroll"></i> Payroll</div>
+      <div class="nav-item" data-view="expenses"><i data-i="expenses"></i> Expenses</div>
+      <div class="nav-label">Workspace</div>
+      <div class="nav-item" data-view="documents"><i data-i="documents"></i> Documents</div>
+      <div class="nav-item" data-view="announcements"><i data-i="announcements"></i> Announcements</div>
+      <div class="nav-item" data-view="settings"><i data-i="settings"></i> Settings</div>
+    </div>
+    <div class="side-foot">
+      <div class="ai-promo" onclick="openAI()">
+        <div class="spark">✦</div>
+        <h4>Loop AI Assistant</h4>
+        <p>Just chat — Loop AI can add people, book leave & more.</p>
+        <button>Open Assistant</button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="page-title"><h2 id="pt-title">Dashboard</h2></div>
+      <div class="search" onclick="openCmd()"><i data-i="search"></i><input placeholder="Search..." readonly><kbd>⌘K</kbd></div>
+      <button class="icon-btn" onclick="openAI()" title="AI Assistant"><i data-i="spark"></i></button>
+      <button class="icon-btn" onclick="toggleTheme()" title="Theme"><i data-i="theme"></i></button>
+      <button class="icon-btn" onclick="toggleNotif(event)" title="Notifications"><i data-i="bell"></i><span class="dot"></span></button>
+      <div class="avatar-btn" onclick="go('settings')">
+        <div class="av" style="background:linear-gradient(135deg,#c79a3a,#bd7942)">CS</div>
+        <div class="nm">Carla Sanford</div><i data-i="down" style="width:14px;height:14px;color:var(--ink-3)"></i>
+      </div>
+    </header>
+    <div class="content" id="content"></div>
+  </div>
+</div>
+
+<div class="notif-panel" id="notifPanel">
+  <div class="notif-head"><h3>Notifications</h3><span class="link" style="font-size:12px;color:var(--brand);font-weight:700;cursor:pointer">Mark all read</span></div>
+  <div id="notifList"></div>
+</div>
+
+<div class="cmdk" id="cmdk" onclick="if(event.target.id==='cmdk')closeCmd()">
+  <div class="cmd-box"><div class="cmd-input"><i data-i="search"></i><input id="cmdInput" placeholder="Jump to, or search anyone..." oninput="filterCmd(this.value)"></div><div class="cmd-list" id="cmdList"></div></div>
+</div>
+
+<div class="overlay" id="overlay" onclick="if(event.target.id==='overlay')closeModal()"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast"><i data-i="check"></i><span id="toastMsg"></span></div>
+
+<!-- AI ASSISTANT -->
+<button class="ai-fab" onclick="openAI()" title="Ask Loop AI"><i data-i="spark"></i></button>
+<div class="ai-drawer" id="aiDrawer">
+  <div class="ai-dh">
+    <div class="row">
+      <div class="orb"><i data-i="spark"></i></div>
+      <div><h3>Loop AI</h3><p>Your HR agent · chat to get things done</p></div>
+      <button class="close" onclick="closeAI()"><i data-i="x"></i></button>
+    </div>
+    <div class="ai-task" id="aiTask"></div>
+  </div>
+  <div class="ai-msgs" id="aiMsgs"></div>
+  <div class="ai-suggest" id="aiSuggest"></div>
+  <div class="ai-input">
+    <textarea id="aiText" rows="1" placeholder="Ask about attendance, policies, hiring..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAI()}"></textarea>
+    <button onclick="sendAI()"><i data-i="send"></i></button>
+  </div>
+</div>
+
+<script>
+const ICONS={
+ dashboard:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>',
+ employees:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+ attendance:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+ leave:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/></svg>',
+ recruitment:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>',
+ onboarding:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>',
+ performance:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>',
+ payroll:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>',
+ expenses:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/><path d="M9 13h6M9 17h3"/></svg>',
+ documents:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M13 2v7h7"/></svg>',
+ announcements:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>',
+ settings:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+ search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>',
+ bell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>',
+ theme:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg>',
+ plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>',
+ check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+ arrow:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>',
+ up:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>',
+ down:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>',
+ x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>',
+ clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+ gift:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg>',
+ mail:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>',
+ star:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
+ file:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M13 2v7h7"/></svg>',
+ download:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>',
+ spark:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/><circle cx="12" cy="12" r="3.2"/></svg>',
+ send:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>',
+ brain:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 0 0-3 3 3 3 0 0 0-1 5.8V16a3 3 0 0 0 6 0M12 5a3 3 0 0 1 3 3 3 3 0 0 1 1 5.8V16a3 3 0 0 1-6 0"/></svg>',
+ alert:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>',
+ target:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg>',
+};
+function setIcons(root=document){root.querySelectorAll('[data-i]').forEach(e=>{e.innerHTML=ICONS[e.dataset.i]||'';});}
+
+const AV=['#bd7942','#c79a3a','#5b8bb5','#7a9471','#d96a4a','#a76b9c','#d99b63','#8a7f6f'];
+function initials(n){return n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();}
+function col(i){return AV[i%AV.length];}
+function av(name,i,size){return `<div class="av" style="background:linear-gradient(135deg,${col(i)},${col(i+2)});${size?`width:${size}px;height:${size}px;font-size:${size/2.6}px`:''}">${initials(name)}</div>`;}
+function ringSVG(pct,c1,c2,big,small){const R=50,C=2*Math.PI*R,id='rg'+Math.random().toString(36).slice(2,7);return `<div class="ring"><svg width="120" height="120" viewBox="0 0 120 120"><defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs><circle cx="60" cy="60" r="${R}" fill="none" stroke="var(--surface-3)" stroke-width="12"/><circle class="ring-fg" cx="60" cy="60" r="${R}" fill="none" stroke="url(#${id})" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}" data-off="${(C*(1-Math.max(0.001,Math.min(1,pct)))).toFixed(1)}"/></svg><div class="rt"><b>${big}</b><span>${small}</span></div></div>`;}
+function animateRings(){requestAnimationFrame(()=>document.querySelectorAll('.ring-fg').forEach(c=>c.style.strokeDashoffset=c.dataset.off));}
+function stPill(st){const m={active:['green','Active'],leave:['gold','On Leave'],remote:['sky','Remote'],pending:['gold','Pending'],approved:['green','Approved'],rejected:['coral','Rejected']};const[c,l]=m[st]||['gray',st];return `<span class="pill ${c}"><span class="dotc"></span>${l}</span>`;}
+
+const EMP=[
+ {id:'OM1246924',n:'Judy Abbott',r:'Interactions Manager',d:'Operations',e:'judy@24loops.co',st:'active',att:99,perf:4.9,tenure:'4y 2m',tasks:314},
+ {id:'OM1243473',n:'Martin Feeney',r:'Accountability Specialist',d:'Finance',e:'martin@24loops.co',st:'active',att:96,perf:4.6,tenure:'3y 1m',tasks:308},
+ {id:'OM4637343',n:'Ellen Streich',r:'Mobility Supervisor',d:'Operations',e:'ellen@24loops.co',st:'active',att:98,perf:4.8,tenure:'2y 7m',tasks:289},
+ {id:'OM1535524',n:'Ellis Lubowitz',r:'Product Security Engineer',d:'Engineering',e:'ellis@24loops.co',st:'remote',att:95,perf:4.5,tenure:'1y 9m',tasks:242},
+ {id:'OM1316814',n:'Dave Kovacek',r:'Human Tactics Assistant',d:'People Ops',e:'dave@24loops.co',st:'active',att:94,perf:4.3,tenure:'2y 3m',tasks:221},
+ {id:'OM7782214',n:'Louis Gutkowski',r:'Senior Engineer',d:'Engineering',e:'louis@24loops.co',st:'active',att:97,perf:4.7,tenure:'5y 0m',tasks:314},
+ {id:'OM5521903',n:'Marlene Kuhlman',r:'Product Designer',d:'Design',e:'marlene@24loops.co',st:'leave',att:91,perf:4.4,tenure:'1y 1m',tasks:308},
+ {id:'OM9923410',n:'Kristi Lueilwitz',r:'Data Analyst',d:'Analytics',e:'kristi@24loops.co',st:'active',att:98,perf:4.6,tenure:'3y 4m',tasks:289},
+ {id:'OM3391882',n:'Abel Pollich',r:'Marketing Manager',d:'Marketing',e:'abel@24loops.co',st:'remote',att:96,perf:4.4,tenure:'2y 0m',tasks:242},
+ {id:'OM8847123',n:'Yuki Tanaka',r:'QA Engineer',d:'Engineering',e:'yuki@24loops.co',st:'active',att:97,perf:4.5,tenure:'1y 6m',tasks:198},
+];
+const LEAVE_REQ=[
+ {n:'Ellis Lubowitz',type:'Annual Leave',from:'Jun 10',to:'Jun 14',days:5,st:'pending'},
+ {n:'Marlene Kuhlman',type:'Sick Leave',from:'Jun 9',to:'Jun 9',days:1,st:'pending'},
+ {n:'Dave Kovacek',type:'Personal',from:'Jun 16',to:'Jun 17',days:2,st:'pending'},
+ {n:'Abel Pollich',type:'Annual Leave',from:'Jun 20',to:'Jun 27',days:6,st:'approved'},
+ {n:'Yuki Tanaka',type:'Annual Leave',from:'Jun 3',to:'Jun 4',days:2,st:'approved'},
+ {n:'Martin Feeney',type:'Sick Leave',from:'May 28',to:'May 29',days:2,st:'rejected'},
+];
+const CANDIDATES={
+ 'Applied':[{n:'Eva Schmidt',r:'Frontend Engineer',ai:88},{n:'Raj Patel',r:'Frontend Engineer',ai:72},{n:'Lucia Ferrari',r:'UX Researcher',ai:91}],
+ 'Screening':[{n:'Omar Khan',r:'DevOps Engineer',ai:84},{n:'Hannah Cole',r:'Product Manager',ai:79}],
+ 'Interview':[{n:'Marcus Lee',r:'Senior Designer',ai:93},{n:'Fatima Noor',r:'Data Scientist',ai:87}],
+ 'Offer':[{n:'Aria Kapoor',r:'Engineering Manager',ai:96}],
+};
+const DOCS=[
+ {n:'Employee Handbook 2026',t:'PDF',s:'2.4 MB',c:'gold'},{n:'Code of Conduct',t:'PDF',s:'880 KB',c:'coral'},
+ {n:'Remote Work Policy',t:'DOCX',s:'120 KB',c:'sky'},{n:'Benefits Guide',t:'PDF',s:'3.1 MB',c:'green'},
+ {n:'Payroll Calendar',t:'XLSX',s:'45 KB',c:'brand'},{n:'NDA Template',t:'PDF',s:'210 KB',c:'gold'},
+ {n:'Org Chart',t:'PNG',s:'1.2 MB',c:'sky'},{n:'Expense Policy',t:'DOCX',s:'95 KB',c:'coral'},
+];
+const ANN=[
+ {i:'gift',c:'coral',t:'Summer Wellness Week 🌿',p:'Join us June 23–27 for yoga, mindfulness workshops and a company-wide hike. Sign up on the events board.',time:'2 hours ago'},
+ {i:'star',c:'gold',t:'Q2 All-Hands Recap',p:'We crossed 49,000 customers and shipped 3 major features. Replay and slides are in the Documents hub.',time:'Yesterday'},
+ {i:'announcements',c:'brand',t:'New Hybrid Work Policy',p:'Starting July, all teams move to a flexible 3-day in-office model. Full policy in Documents.',time:'2 days ago'},
+];
+const NOTIF=[
+ {i:'leave',c:'coral',p:'<b>Ellis Lubowitz</b> requested 5 days annual leave',t:'12 min ago'},
+ {i:'spark',c:'brand',p:'<b>AI Insight:</b> Engineering attrition risk rose 8% this month',t:'1 hour ago'},
+ {i:'gift',c:'gold',p:"It's <b>Ellen Streich's</b> work anniversary today 🎉",t:'3 hours ago'},
+ {i:'check',c:'green',p:'Payroll for May processed successfully',t:'Yesterday'},
+];
+
+const META={
+ dashboard:["Dashboard"],employees:["Employees"],attendance:["Attendance"],leave:["Leave Management"],
+ aihub:["AI Hub"],recruitment:["Recruitment"],onboarding:["Onboarding"],performance:["Performance"],
+ payroll:["Payroll"],expenses:["Expenses"],documents:["Documents"],announcements:["Announcements"],settings:["Settings"],
+};
+
+const VIEWS={
+dashboard(){return `
+ <div class="dash-grid">
+   <div class="grid" style="gap:18px">
+     <div class="panel" style="padding:8px">
+       <div class="stat-row">
+         ${[['employees','Total Employees','49,229','brand'],['target','Total Projects','49,229','sky'],['recruitment','Job Applicants','49,229','sage']].map(s=>`
+         <div class="stat-mini"><div class="si" style="background:var(--${s[3]}-soft);color:var(--${s[3]==='brand'?'brand':s[3]})"><i data-i="${s[0]}"></i></div><div><div class="sl">${s[1]}</div><div class="sv"><span class="count" data-to="${s[2].replace(/,/g,'')}">0</span></div></div></div>`).join('')}
+       </div>
+     </div>
+
+     <div class="panel ai-strip">
+       <div class="sec-head"><h3>✦ AI Insights</h3><span class="pill brand"><span class="dotc"></span>Updated live</span></div>
+       <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:12px">
+         <div class="ai-insight" onclick="openAI('Why is engineering attrition risk rising?')"><div class="aii" style="background:var(--coral-soft);color:var(--coral)"><i data-i="alert"></i></div><div><h4>Attrition risk ↑</h4><p>Engineering shows 8% higher flight risk. 3 people flagged.</p></div></div>
+         <div class="ai-insight" onclick="openAI('Who should I prioritise for the open Engineering Manager role?')"><div class="aii" style="background:var(--brand-soft);color:var(--brand)"><i data-i="target"></i></div><div><h4>Hiring tip</h4><p>Aria Kapoor scores 96% fit for the EM role. Move to offer.</p></div></div>
+         <div class="ai-insight" onclick="openAI('Summarise this week in HR')"><div class="aii" style="background:var(--sky-soft);color:var(--sky)"><i data-i="brain"></i></div><div><h4>Weekly summary</h4><p>Attendance steady at 90%. 3 leaves pending review.</p></div></div>
+       </div>
+     </div>
+
+     <div class="panel">
+       <div class="sec-head"><h3>Average KPI Score</h3><div class="seg"><button class="active">Past 3 months</button></div></div>
+       <div style="display:grid;grid-template-columns:1fr 280px;gap:24px">
+         <div>
+           <div class="kpi-num">63.89%</div>
+           <div class="pill coral" style="margin-top:8px"><i data-i="down" style="width:11px;height:11px"></i> 2.34%</div>
+           <div class="chart-box" style="height:200px;margin-top:14px"><canvas id="chartKpi"></canvas></div>
+         </div>
+         <div class="top-perf">
+           <div style="font-size:13px;font-weight:700;margin-bottom:8px">Top Performance</div>
+           ${[...EMP].sort((a,b)=>b.tasks-a.tasks).slice(0,4).map((e,i)=>`<div class="tp-item">${av(e.n,i+5,34)}<div><div class="tn">${e.n}</div><div class="tc">${e.tasks} tasks completed</div></div><div class="rank">#${i+1}</div></div>`).join('')}
+         </div>
+       </div>
+     </div>
+
+     <div class="panel">
+       <div class="sec-head"><h3>Employees</h3><span class="link" onclick="go('employees')">View all <i data-i="arrow"></i></span></div>
+       <table><thead><tr><th>ID</th><th>Name</th><th>Role</th><th>Performance</th><th></th></tr></thead><tbody>
+       ${EMP.slice(0,5).map((e,i)=>`<tr style="cursor:pointer" onclick="empDetail(${i})"><td style="color:var(--ink-3);font-weight:600">${e.id}</td>
+         <td><div class="emp-cell">${av(e.n,i,34)}<div class="e-nm">${e.n}</div></div></td>
+         <td style="color:var(--ink-2)">${e.r}</td>
+         <td style="width:140px"><div class="bar-track"><div class="bar-fill" style="width:${e.perf/5*100}%"></div></div></td>
+         <td style="text-align:right;color:var(--ink-3)">•••</td></tr>`).join('')}
+       </tbody></table>
+     </div>
+   </div>
+
+   <div class="grid" style="gap:18px">
+     <div class="meeting-card">
+       <h3>Upcoming Meeting</h3>
+       ${[1,2,3].map((m,i)=>`<div class="mtg"><div class="mt">Project Manager – Job Interview</div><div class="md">Today 06:00–08:00</div><div class="stack">${[0,1,2,3].map(k=>av('A B',i*4+k,28)).join('')}</div></div>`).join('')}
+     </div>
+     <div class="panel">
+       <div class="sec-head"><h3>Working Format</h3></div>
+       ${[['On-site','13,982','11.4%','coral',11.4],['Hybrid','26,214','32.2%','gold',32.2],['Remote','41,214','56.4%','sky',56.4]].map(w=>`
+       <div class="wf-row"><div class="wf-top"><div><div class="wf-lbl">${w[0]}</div><div class="wf-num">${w[1]}</div></div></div>
+       <div class="wf-bar" style="background:var(--${w[3]}-soft);color:var(--${w[3]==='brand'?'brand':w[3]});width:${Math.max(w[4],28)}%;min-width:120px">${w[2]}</div></div>`).join('')}
+     </div>
+   </div>
+ </div>`;},
+
+aihub(){return `
+ <div class="grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:18px">
+   ${[['brain','AI Conversations','1,284','this month'],['target','Tasks Automated','356','saved ~94 hrs'],['spark','Insights Generated','89','across teams']].map((s,i)=>`
+   <div class="panel stat" style="position:relative;overflow:hidden"><div class="aii" style="width:46px;height:46px;border-radius:13px;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;margin-bottom:14px"><i data-i="${s[0]}"></i></div><div style="font-size:12.5px;color:var(--ink-3);font-weight:600">${s[1]}</div><div style="font-family:var(--display);font-size:30px;font-weight:700;letter-spacing:-1px">${s[2]}</div><div style="font-size:11.5px;color:var(--ink-3);font-weight:600;margin-top:2px">${s[3]}</div></div>`).join('')}
+ </div>
+ <div class="grid" style="grid-template-columns:1fr 1fr">
+   <div class="panel">
+     <div class="sec-head"><h3>✦ AI HR Tools</h3></div>
+     ${[['Ask Loop AI','Chat with your HR copilot about anything','spark',"openAI()"],['Draft job description','Generate a polished JD in seconds','documents',"aiTool('Write a job description for a Senior Frontend Engineer at 24 loops')"],['Summarise a review','Turn raw notes into a clean performance summary','performance',"aiTool('Summarise this performance review into 3 strengths and 2 growth areas: strong delivery, mentors juniors, sometimes misses deadlines, great communicator, needs to delegate more.')"],['Policy answer','Explain a company policy in plain language','file',"aiTool('Explain our remote work policy in simple terms for a new hire.')"]].map(t=>`
+     <div class="ai-insight" style="margin-bottom:10px" onclick="${t[3]}"><div class="aii" style="background:var(--brand-soft);color:var(--brand)"><i data-i="${t[2]}"></i></div><div><h4>${t[0]}</h4><p>${t[1]}</p></div><i data-i="arrow" style="margin-left:auto;width:16px;height:16px;color:var(--ink-3)"></i></div>`).join('')}
+   </div>
+   <div class="panel">
+     <div class="sec-head"><h3>Smart Recommendations</h3></div>
+     <div class="tline">
+       <div class="tl-item"><div class="tt">Promote Ellen Streich</div><div class="td">Top performer · ready for senior role</div></div>
+       <div class="tl-item"><div class="tt">Check in with Engineering</div><div class="td">Attrition risk rising — schedule 1:1s</div></div>
+       <div class="tl-item"><div class="tt">Close Engineering Manager role</div><div class="td">Aria Kapoor is a 96% match</div></div>
+       <div class="tl-item"><div class="tt">Review overtime in Operations</div><div class="td">3 staff above healthy hours</div></div>
+     </div>
+     <button class="btn primary" style="width:100%;margin-top:16px" onclick="openAI()"><i data-i="spark"></i> Open AI Assistant</button>
+   </div>
+ </div>`;},
+
+employees(){return `
+ <div style="display:flex;gap:12px;margin-bottom:20px;align-items:center;flex-wrap:wrap">
+   <div class="search" style="margin:0;width:300px"><i data-i="search"></i><input id="empSearch" placeholder="Search employees..." oninput="filterEmp(this.value)"></div>
+   <select class="select" aria-label="Filter by department" style="margin:0" onchange="filterEmpDept(this.value)"><option value="">All Departments</option>${[...new Set(EMP.map(e=>e.d))].map(d=>`<option>${d}</option>`).join('')}</select>
+   <button class="btn primary" style="margin-left:auto" onclick="addEmpModal()"><i data-i="plus"></i> Add Employee</button>
+ </div>
+ <div class="emp-grid stagger" id="empGrid"></div>`;},
+
+attendance(){const now=new Date();return `
+ <div class="grid" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:18px">
+   <div class="clock-card">
+     <div style="font-size:12px;color:#9c9388;font-weight:700;text-transform:uppercase;letter-spacing:1px">Your Status</div>
+     <div class="clock-time" id="liveClock">--:--:--</div>
+     <div class="clock-date">${now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</div>
+     <button class="btn primary" id="clockBtn" onclick="toggleClock()" style="margin-top:20px"><i data-i="clock"></i> Clock In</button>
+     <div id="clockStatus" style="margin-top:12px;font-size:12px;color:#9c9388;font-weight:600"></div>
+   </div>
+   <div class="panel"><div style="font-size:12.5px;color:var(--ink-3);font-weight:600">Avg Check-in</div><div style="font-family:var(--display);font-size:30px;font-weight:700;margin:6px 0">09:12 <small style="font-size:13px;color:var(--ink-3)">AM</small></div><div class="bar-track"><div class="bar-fill" style="width:78%"></div></div><div style="font-size:11.5px;color:var(--ink-3);margin-top:8px;font-weight:600">78% on time this week</div></div>
+   <div class="panel"><div style="font-size:12.5px;color:var(--ink-3);font-weight:600">Total Hours (Week)</div><div style="font-family:var(--display);font-size:30px;font-weight:700;margin:6px 0">386<small style="font-size:13px;color:var(--ink-3)">/450 hrs</small></div><div class="bar-track"><div class="bar-fill" style="width:86%"></div></div><div style="font-size:11.5px;color:var(--ink-3);margin-top:8px;font-weight:600">86% of capacity</div></div>
+ </div>
+ <div class="panel">
+   <div class="sec-head"><h3>Today's Attendance Log</h3><span class="pill green"><span class="dotc"></span>Live</span></div>
+   <table><thead><tr><th>Employee</th><th>Department</th><th>Clock In</th><th>Hours</th><th>Status</th></tr></thead><tbody>
+   ${EMP.slice(0,8).map((e,i)=>{const ci=['08:58','09:05','08:45','—','09:12','09:30','08:50','09:48'][i];const onl=e.st!=='leave';return `<tr>
+     <td><div class="emp-cell">${av(e.n,i,36)}<div class="e-nm">${e.n}</div></div></td><td style="color:var(--ink-3)">${e.d}</td>
+     <td><b>${onl?ci:'—'}</b></td><td>${onl?'<b>'+(i*0.4+6.2).toFixed(1)+'h</b>':'—'}</td>
+     <td>${onl?(i===7?'<span class="pill gold"><span class="dotc"></span>Late</span>':'<span class="pill green"><span class="dotc"></span>Present</span>'):'<span class="pill coral"><span class="dotc"></span>Absent</span>'}</td></tr>`;}).join('')}
+   </tbody></table>
+ </div>`;},
+
+leave(){const bal=[['Annual Leave',14,20,'brand'],['Sick Leave',8,10,'coral'],['Personal',3,5,'sky'],['Remote Days',22,'∞','sage']];return `
+ <div class="grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:18px">
+   ${bal.map(b=>`<div class="lb-card"><div class="lt">${b[0]}</div><div class="lv" style="color:var(--${b[3]==='brand'?'brand':b[3]})">${b[1]}<small> / ${b[2]} days</small></div><div class="bar-track" style="margin-top:12px"><div class="bar-fill" style="width:${typeof b[2]==='number'?b[1]/b[2]*100:60}%;background:var(--${b[3]==='brand'?'brand':b[3]})"></div></div></div>`).join('')}
+ </div>
+ <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+   <div class="seg" id="leaveSeg"><button class="active" onclick="filterLeave('all',this)">All</button><button onclick="filterLeave('pending',this)">Pending</button><button onclick="filterLeave('approved',this)">Approved</button></div>
+   <button class="btn primary" onclick="requestLeaveModal()"><i data-i="plus"></i> Request Leave</button>
+ </div>
+ <div class="panel"><table><thead><tr><th>Employee</th><th>Type</th><th>Duration</th><th>Days</th><th>Status</th><th></th></tr></thead><tbody id="leaveBody"></tbody></table></div>`;},
+
+recruitment(){return `
+ <div class="grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+   ${[['Open Roles','14','brand'],['Applicants','248','sky'],['In Interview','2','gold'],['AI Screened','248','sage']].map(s=>`<div class="panel stat"><div style="font-size:12.5px;color:var(--ink-3);font-weight:600">${s[0]}</div><div style="font-family:var(--display);font-size:30px;font-weight:700;color:var(--${s[2]==='brand'?'brand':s[2]})">${s[1]}</div></div>`).join('')}
+ </div>
+ <div class="panel ai-strip" style="margin-bottom:18px;display:flex;align-items:center;gap:14px">
+   <div class="aii" style="width:42px;height:42px;border-radius:12px;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center"><i data-i="spark"></i></div>
+   <div style="flex:1"><h4 style="font-size:13.5px;font-weight:700">AI Candidate Screening is on</h4><p style="font-size:12px;color:var(--ink-2)">Each candidate gets a fit score based on the role. Click a card to see the AI breakdown.</p></div>
+ </div>
+ <div class="kanban">
+   ${Object.entries(CANDIDATES).map(([stage,cands],si)=>`<div class="kcol"><div class="kh"><h4>${stage}</h4><span class="cnt">${cands.length}</span></div>
+     ${cands.map((c,i)=>`<div class="kcard" onclick="aiScreen('${c.n}','${c.r}',${c.ai})"><div class="kt">${c.n}</div><div class="kr">${c.r}</div><div class="kf"><span class="ai-score">✦ ${c.ai}% fit</span><span class="pill ${['sky','gold','brand','green'][si]}">${['New','Reviewing','Scheduled','Offer'][si]}</span></div></div>`).join('')}
+   </div>`).join('')}
+ </div>`;},
+
+onboarding(){const tasks=[['Sign employment contract',1,'HR'],['Complete tax & banking forms',1,'Finance'],['Set up company accounts',1,'IT'],['Order laptop & equipment',1,'IT'],['Schedule team intros',0,'Manager'],['Security training',0,'HR'],['Review handbook',0,'HR'],['Add to payroll',0,'Finance']];const done=tasks.filter(t=>t[1]).length;return `
+ <div class="grid" style="grid-template-columns:1fr 2fr">
+   <div class="panel" style="text-align:center">
+     <div style="display:grid;place-items:center">${ringSVG(done/tasks.length,'var(--brand-2)','var(--brand)',Math.round(done/tasks.length*100)+'%','complete')}</div>
+     <div style="margin-top:14px">${av('Eva Schmidt',2,56)}</div>
+     <h3 style="font-family:var(--display);font-size:18px;margin-top:10px">Eva Schmidt</h3>
+     <p style="font-size:12.5px;color:var(--ink-3)">Frontend Engineer · Starts June 16</p>
+     <button class="btn ghost" style="width:100%;margin-top:16px" onclick="aiTool('Write a warm welcome email for Eva Schmidt, a new Frontend Engineer starting June 16 at 24 loops.')"><i data-i="spark"></i> AI: Draft welcome email</button>
+   </div>
+   <div class="panel"><div class="sec-head"><h3>Onboarding Checklist</h3></div>
+     ${tasks.map(t=>`<div class="check-item ${t[1]?'done':''}" onclick="this.classList.toggle('done')"><div class="check-box"><i data-i="check"></i></div><span class="ct">${t[0]}</span><span class="pill gray" style="margin-left:auto">${t[2]}</span></div>`).join('')}
+   </div>
+ </div>`;},
+
+performance(){return `
+ <div class="grid" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:18px">
+   <div class="panel"><div class="sec-head"><h3>Company Score</h3></div><div class="ring-wrap">${ringSVG(0.92,'#e0c25a','var(--gold)','4.6','/ 5.0')}<div><div style="font-size:13px;font-weight:700">↑ Up from 4.3</div><div style="font-size:12px;color:var(--ink-3)">142 reviews this quarter</div></div></div></div>
+   <div class="panel"><div class="sec-head"><h3>Goals</h3></div>${[['Revenue Target',82,'brand'],['Hiring Plan',64,'sky'],['Roadmap',91,'sage']].map(g=>`<div style="margin-bottom:16px"><div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:600;margin-bottom:7px"><span>${g[0]}</span><b>${g[1]}%</b></div><div class="bar-track"><div class="bar-fill" style="width:${g[1]}%;background:var(--${g[2]==='brand'?'brand':g[2]})"></div></div></div>`).join('')}</div>
+   <div class="panel"><div class="sec-head"><h3>Reviews Due</h3></div><div style="font-family:var(--display);font-size:42px;font-weight:700;color:var(--coral)">23</div><p style="font-size:12.5px;color:var(--ink-3);margin-bottom:14px">pending before June 15</p><button class="btn ghost" style="width:100%" onclick="toast('Reminders sent')">Send Reminders</button></div>
+ </div>
+ <div class="panel"><div class="sec-head"><h3>Top Performers</h3></div>
+   <table><thead><tr><th>Employee</th><th>Department</th><th>Rating</th><th>Tasks</th><th>Trend</th></tr></thead><tbody>
+   ${[...EMP].sort((a,b)=>b.perf-a.perf).slice(0,6).map((e,i)=>`<tr><td><div class="emp-cell">${av(e.n,i,36)}<div><div class="e-nm">${e.n}</div><div class="e-rl">${e.r}</div></div></div></td><td style="color:var(--ink-3)">${e.d}</td><td><span class="pill gold"><i data-i="star" style="width:11px;height:11px"></i> ${e.perf}</span></td><td><b>${e.tasks}</b></td><td><span class="pill green"><i data-i="up" style="width:11px;height:11px"></i>${(Math.random()*5+1).toFixed(1)}%</span></td></tr>`).join('')}
+   </tbody></table>
+ </div>`;},
+
+payroll(){return `
+ <div class="grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:18px">
+   ${[['Monthly Payroll','$1.24M','brand'],['Avg Salary','$8,720','sky'],['Bonuses','$86K','sage'],['Next Run','Jun 28','gold']].map(s=>`<div class="panel stat"><div style="font-size:12.5px;color:var(--ink-3);font-weight:600">${s[0]}</div><div style="font-family:var(--display);font-size:26px;font-weight:700;color:var(--${s[2]==='brand'?'brand':s[2]})">${s[1]}</div></div>`).join('')}
+ </div>
+ <div class="grid" style="grid-template-columns:1fr 1.6fr">
+   <div class="panel"><div class="sec-head"><h3>Payslip · May</h3></div>
+     <div style="font-family:var(--display);font-size:36px;font-weight:700;letter-spacing:-1px">$9,240<span style="font-size:14px;color:var(--ink-3);font-weight:600">.00 net</span></div>
+     <div style="margin:18px 0;border-top:1px dashed var(--line);padding-top:18px">${[['Base Salary','$10,500'],['Bonus','$1,200'],['Income Tax','−$1,840'],['Insurance','−$420'],['Pension','−$200']].map(r=>`<div style="display:flex;justify-content:space-between;font-size:13px;padding:7px 0;font-weight:600"><span style="color:var(--ink-2)">${r[0]}</span><span style="color:${r[1].includes('−')?'var(--coral)':'var(--ink)'}">${r[1]}</span></div>`).join('')}</div>
+     <button class="btn primary" style="width:100%" onclick="toast('Payslip downloaded')"><i data-i="download"></i> Download Payslip</button>
+   </div>
+   <div class="panel"><div class="sec-head"><h3>Payroll by Department</h3></div><div class="chart-box" style="height:230px"><canvas id="chartPay"></canvas></div></div>
+ </div>`;},
+
+expenses(){const exp=[['Louis Gutkowski','Client dinner','Travel & Meals','$184','pending'],['Marlene Kuhlman','Design software','Software','$54','approved'],['Ellis Lubowitz','Flight to NYC','Travel','$420','pending'],['Kristi Lueilwitz','Conference','Training','$299','approved'],['Abel Pollich','Ad campaign','Marketing','$1,200','rejected']];return `
+ <div class="grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:18px">
+   ${[['Pending','$604','gold'],['Approved (Month)','$3,840','sage'],['Reimbursed','$12,460','sky']].map(s=>`<div class="panel stat"><div style="font-size:12.5px;color:var(--ink-3);font-weight:600">${s[0]}</div><div style="font-family:var(--display);font-size:30px;font-weight:700;color:var(--${s[2]==='brand'?'brand':s[2]})">${s[1]}</div></div>`).join('')}
+ </div>
+ <div style="display:flex;justify-content:flex-end;margin-bottom:16px"><button class="btn primary" onclick="toast('New claim form opened')"><i data-i="plus"></i> New Claim</button></div>
+ <div class="panel"><table><thead><tr><th>Employee</th><th>Description</th><th>Category</th><th>Amount</th><th>Status</th></tr></thead><tbody>
+   ${exp.map((e,i)=>`<tr><td><div class="emp-cell">${av(e[0],i,36)}<div class="e-nm">${e[0]}</div></div></td><td>${e[1]}</td><td style="color:var(--ink-3)">${e[2]}</td><td><b>${e[3]}</b></td><td>${stPill(e[4])}</td></tr>`).join('')}
+ </tbody></table></div>`;},
+
+documents(){return `
+ <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px"><div class="seg"><button class="active">All Files</button><button>Policies</button><button>Templates</button></div><button class="btn primary" onclick="toast('Upload dialog opened')"><i data-i="plus"></i> Upload</button></div>
+ <div class="doc-grid stagger">${DOCS.map((d,i)=>`<div class="doc" style="animation-delay:${i*40}ms" onclick="toast('Opening ${d.n}')"><div class="di" style="background:var(--${d.c}-soft);color:var(--${d.c==='brand'?'brand':d.c})"><i data-i="file"></i></div><h4>${d.n}</h4><p>${d.t} · ${d.s}</p></div>`).join('')}</div>`;},
+
+announcements(){return `
+ <div style="display:flex;justify-content:flex-end;margin-bottom:18px"><button class="btn primary" onclick="aiTool('Draft a friendly company announcement about a new summer wellness program.')"><i data-i="spark"></i> AI: Draft announcement</button></div>
+ <div class="grid stagger" style="gap:14px">${ANN.map((a,i)=>`<div class="ann" style="animation-delay:${i*70}ms"><div class="ai-ic" style="background:var(--${a.c}-soft);color:var(--${a.c==='brand'?'brand':a.c})"><i data-i="${a.i}"></i></div><div style="flex:1"><h4>${a.t}</h4><p>${a.p}</p><div class="at">Posted by Carla Sanford · ${a.time}</div></div></div>`).join('')}</div>`;},
+
+settings(){return `
+ <div class="grid" style="grid-template-columns:1fr 2fr">
+   <div class="panel" style="text-align:center"><div class="av" style="width:84px;height:84px;font-size:30px;margin:0 auto;background:linear-gradient(135deg,#c79a3a,#bd7942)">CS</div><h3 style="font-family:var(--display);font-size:20px;margin-top:14px">Carla Sanford</h3><p style="font-size:13px;color:var(--ink-3)">HR Director · People Ops</p><div style="margin-top:14px"><span class="pill green"><span class="dotc"></span>Active</span> <span class="pill brand">Admin</span></div><button class="btn ghost" style="width:100%;margin-top:16px">Change Photo</button></div>
+   <div class="panel"><div class="sec-head"><h3>Profile Settings</h3></div>
+     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px"><div class="field"><label>Full Name</label><input value="Carla Sanford"></div><div class="field"><label>Email</label><input value="carla@24loops.co"></div><div class="field"><label>Department</label><input value="People Operations"></div><div class="field"><label>Job Title</label><input value="HR Director"></div></div>
+     <div class="sec-head" style="margin-top:10px"><h3 style="font-size:15px">Preferences</h3></div>
+     ${[['Email notifications',1],['AI weekly digest',1],['Dark mode',0]].map(p=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-top:1px solid var(--line-2)"><span style="font-size:13.5px;font-weight:600">${p[0]}</span><div onclick="this.classList.toggle('on');${p[0]==='Dark mode'?'toggleTheme()':''}" class="${p[1]?'on':''}" style="width:44px;height:25px;border-radius:20px;background:${p[1]?'var(--brand)':'var(--line)'};position:relative;cursor:pointer;transition:.2s"><span style="position:absolute;top:3px;left:${p[1]?'22px':'3px'};width:19px;height:19px;border-radius:50%;background:#fff;transition:.2s;box-shadow:var(--shadow-sm)"></span></div></div>`).join('')}
+     <button class="btn primary" style="margin-top:16px" onclick="toast('Settings saved')"><i data-i="check"></i> Save Changes</button>
+   </div>
+ </div>`;},
+};
+
+/* NAV */
+let current='dashboard';
+function go(view){current=view;
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.view===view));
+  document.getElementById('pt-title').textContent=META[view][0];
+  const c=document.getElementById('content');c.innerHTML=`<div class="view active">${VIEWS[view]()}</div>`;c.scrollTop=0;setIcons(c);
+  if(view==='dashboard'){drawKpi();countUp();}
+  if(view==='employees')renderEmp(EMP);
+  if(view==='attendance')startClock();
+  if(view==='leave')filterLeave('all');
+  if(view==='payroll')drawPay();
+  if(view==='onboarding'||view==='performance')animateRings();
+  closeNotif();
+}
+document.querySelectorAll('.nav-item').forEach(n=>n.onclick=()=>go(n.dataset.view));
+
+function countUp(){document.querySelectorAll('.count').forEach(el=>{const to=parseFloat(el.dataset.to);if(isNaN(to))return;const dur=1200,t0=performance.now();(function step(now){const p=Math.min((now-t0)/dur,1);const e=1-Math.pow(1-p,3);el.textContent=Math.round(to*e).toLocaleString();if(p<1)requestAnimationFrame(step);})(t0);});}
+
+/* CHARTS */
+function ck(){const cs=getComputedStyle(document.body);return{ink:cs.getPropertyValue('--ink-3'),line:cs.getPropertyValue('--line'),brand:cs.getPropertyValue('--brand'),brand3:cs.getPropertyValue('--brand-3')};}
+let charts=[];function clearCharts(){charts.forEach(c=>c.destroy());charts=[];}
+function drawKpi(){clearCharts();const c=ck();const el=document.getElementById('chartKpi');if(!el)return;const g=el.getContext('2d');
+  const grad=g.createLinearGradient(0,0,0,200);grad.addColorStop(0,c.brand);grad.addColorStop(1,c.brand3);
+  charts.push(new Chart(g,{type:'bar',data:{labels:['Feb','Mar','Apr','May','Jun','Jul'],datasets:[{data:[52,68,61,74,58,70],backgroundColor:grad,borderRadius:10,barThickness:26}]},options:{plugins:{legend:{display:false}},scales:{y:{max:100,grid:{color:c.line},ticks:{color:c.ink,callback:v=>v+'%'}},x:{grid:{display:false},ticks:{color:c.ink}}},maintainAspectRatio:false}}));}
+function drawPay(){clearCharts();const c=ck();const el=document.getElementById('chartPay');if(!el)return;const g=el.getContext('2d');
+  charts.push(new Chart(g,{type:'bar',data:{labels:['Eng','Sales','Design','Mktg','Ops','Fin'],datasets:[{data:[420,310,180,160,90,80],backgroundColor:c.brand,borderRadius:8,barThickness:30}]},options:{plugins:{legend:{display:false}},scales:{y:{grid:{color:c.line},ticks:{color:c.ink,callback:v=>'$'+v+'K'}},x:{grid:{display:false},ticks:{color:c.ink}}},maintainAspectRatio:false}}));}
+
+/* EMPLOYEES */
+function renderEmp(list){const g=document.getElementById('empGrid');if(!g)return;if(!list.length){g.innerHTML='<div class="empty">No employees found.</div>';return;}
+  g.innerHTML=list.map((e,i)=>`<div class="emp-card" style="animation-delay:${i*35}ms" onclick="empDetail(${EMP.indexOf(e)})">${av(e.n,i,64)}<h4>${e.n}</h4><div class="role">${e.r}</div>${stPill(e.st)}<div class="meta"><div><b>${e.att}%</b>Attendance</div><div><b>${e.perf}</b>Rating</div></div></div>`).join('');setIcons(g);}
+let ef={q:'',d:''};
+function filterEmp(q){ef.q=q.toLowerCase();applyEmp();}function filterEmpDept(d){ef.d=d;applyEmp();}
+function applyEmp(){renderEmp(EMP.filter(e=>(e.n.toLowerCase().includes(ef.q)||e.r.toLowerCase().includes(ef.q))&&(ef.d===''||e.d===ef.d)));}
+function empDetail(i){const e=EMP[i];openModal(`<div class="modal-head"><h3>Employee Profile</h3><button class="icon-btn" style="width:34px;height:34px" onclick="closeModal()"><i data-i="x"></i></button></div>
+  <div class="modal-body" style="text-align:center">${av(e.n,i,80)}<h3 style="font-family:var(--display);font-size:22px;margin-top:12px">${e.n}</h3><p style="color:var(--ink-3);font-size:13px">${e.r} · ${e.d}</p><div style="margin:14px 0">${stPill(e.st)}</div>
+    <div class="grid" style="grid-template-columns:1fr 1fr;gap:10px;text-align:left">${[['ID',e.id],['Email',e.e],['Tenure',e.tenure],['Performance',e.perf+' / 5.0']].map(r=>`<div style="background:var(--surface-2);padding:12px 14px;border-radius:12px"><div style="font-size:11px;color:var(--ink-3);font-weight:600">${r[0]}</div><div style="font-size:13.5px;font-weight:700;margin-top:2px">${r[1]}</div></div>`).join('')}</div>
+    <button class="btn ghost" style="width:100%;margin-top:16px" onclick="closeModal();aiTool('Write a short performance summary for ${e.n}, a ${e.r} with a ${e.perf}/5 rating and ${e.tasks} tasks completed.')"><i data-i="spark"></i> AI: Summarise performance</button>
+    <button class="btn primary" style="width:100%;margin-top:10px" onclick="toast('Message sent')"><i data-i="mail"></i> Send Message</button></div>`);}
+function addEmpModal(){openModal(`<div class="modal-head"><h3>Add Employee</h3><button class="icon-btn" style="width:34px;height:34px" onclick="closeModal()"><i data-i="x"></i></button></div>
+  <div class="modal-body"><div class="field"><label>Full Name</label><input id="ne_n" placeholder="e.g. John Doe"></div><div class="field"><label>Job Title</label><input id="ne_r" placeholder="e.g. Software Engineer"></div><div class="field"><label>Department</label><select id="ne_d">${[...new Set(EMP.map(e=>e.d))].map(d=>`<option>${d}</option>`).join('')}</select></div><div class="field"><label>Email</label><input id="ne_e" placeholder="name@24loops.co"></div><button class="btn primary" style="width:100%" onclick="saveEmp()"><i data-i="check"></i> Add Employee</button></div>`);}
+function saveEmp(){const n=document.getElementById('ne_n').value||'New Hire';EMP.unshift({id:'OM'+Math.floor(Math.random()*9000000+1000000),n,r:document.getElementById('ne_r').value||'—',d:document.getElementById('ne_d').value,e:document.getElementById('ne_e').value||'—',st:'active',att:100,perf:0,tenure:'0y 0m',tasks:0});closeModal();go('employees');toast(n+' added to the team');}
+
+/* LEAVE */
+function filterLeave(f,btn){if(btn){document.querySelectorAll('#leaveSeg button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}const body=document.getElementById('leaveBody');if(!body)return;
+  body.innerHTML=LEAVE_REQ.filter(l=>f==='all'||l.st===f).map((l,i)=>`<tr><td><div class="emp-cell">${av(l.n,i,36)}<div class="e-nm">${l.n}</div></div></td><td>${l.type}</td><td style="color:var(--ink-3)">${l.from} – ${l.to}</td><td><b>${l.days}</b></td><td>${stPill(l.st)}</td><td style="text-align:right">${l.st==='pending'?`<button class="btn primary" style="padding:6px 12px;font-size:11px" onclick="toast('Approved')">Approve</button>`:''}</td></tr>`).join('');setIcons(body);}
+function requestLeaveModal(){openModal(`<div class="modal-head"><h3>Request Leave</h3><button class="icon-btn" style="width:34px;height:34px" onclick="closeModal()"><i data-i="x"></i></button></div><div class="modal-body"><div class="field"><label>Leave Type</label><select><option>Annual Leave</option><option>Sick Leave</option><option>Personal</option></select></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:16px"><div class="field"><label>From</label><input type="date"></div><div class="field"><label>To</label><input type="date"></div></div><div class="field"><label>Reason</label><textarea placeholder="Add a note..."></textarea></div><button class="btn primary" style="width:100%" onclick="closeModal();toast('Leave request submitted')"><i data-i="check"></i> Submit</button></div>`);}
+
+/* CLOCK */
+let clockTimer,clockedIn=false;
+function startClock(){clearInterval(clockTimer);tick();clockTimer=setInterval(tick,1000);}
+function tick(){const el=document.getElementById('liveClock');if(!el){clearInterval(clockTimer);return;}el.textContent=new Date().toLocaleTimeString('en-GB');}
+function toggleClock(){clockedIn=!clockedIn;const b=document.getElementById('clockBtn'),s=document.getElementById('clockStatus');if(clockedIn){b.innerHTML='<i data-i="clock"></i> Clock Out';s.textContent='✓ Clocked in at '+new Date().toLocaleTimeString('en-GB');toast('Clocked in');}else{b.innerHTML='<i data-i="clock"></i> Clock In';s.textContent='Session ended. Have a great day!';toast('Clocked out');}setIcons(b);}
+
+/* MODAL/TOAST/NOTIF/CMD */
+function openModal(h){const m=document.getElementById('modal');m.innerHTML=h;document.getElementById('overlay').classList.add('show');setIcons(m);}
+function closeModal(){document.getElementById('overlay').classList.remove('show');}
+let tt;function toast(m){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2600);}
+function toggleNotif(e){e.stopPropagation();document.getElementById('notifPanel').classList.toggle('show');}
+function closeNotif(){document.getElementById('notifPanel').classList.remove('show');}
+document.addEventListener('click',e=>{if(!e.target.closest('#notifPanel')&&!e.target.closest('[onclick*=toggleNotif]'))closeNotif();});
+function renderNotif(){document.getElementById('notifList').innerHTML=NOTIF.map(n=>`<div class="notif-item"><div class="ni" style="background:var(--${n.c}-soft);color:var(--${n.c==='brand'?'brand':n.c})"><i data-i="${n.i}"></i></div><div><p>${n.p}</p><div class="nt">${n.t}</div></div></div>`).join('');setIcons(document.getElementById('notifList'));}
+
+const CMD=Object.keys(META).map(k=>({k,t:META[k][0],i:k==='aihub'?'spark':k})).concat(EMP.map((e,i)=>({emp:i,t:e.n,sub:e.r,i:'employees'})));
+function openCmd(){document.getElementById('cmdk').classList.add('show');const inp=document.getElementById('cmdInput');inp.value='';filterCmd('');setTimeout(()=>inp.focus(),50);}
+function closeCmd(){document.getElementById('cmdk').classList.remove('show');}
+function filterCmd(q){q=q.toLowerCase();const list=CMD.filter(c=>c.t.toLowerCase().includes(q)).slice(0,7);document.getElementById('cmdList').innerHTML=list.length?list.map(c=>`<div class="cmd-item" onclick="cmdGo('${c.k||''}',${c.emp??'null'})"><i data-i="${c.i}"></i><div><div>${c.t}</div>${c.sub?`<div style="font-size:11px;color:var(--ink-3);font-weight:500">${c.sub}</div>`:''}</div><span class="ck">${c.k?'Page':'Profile'}</span></div>`).join(''):'<div class="empty" style="padding:30px">No results</div>';setIcons(document.getElementById('cmdList'));}
+function cmdGo(k,emp){closeCmd();if(emp!==null&&emp!=='null'){go('employees');setTimeout(()=>empDetail(emp),120);}else go(k);}
+
+function toggleTheme(){const h=document.documentElement;const dark=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',dark?'light':'dark');if(current==='dashboard')drawKpi();if(current==='payroll')drawPay();}
+document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();openCmd();}if(e.key==='Escape'){closeCmd();closeModal();closeNotif();closeAI();}});
+
+/* ============ LOOP AI — AGENTIC ASSISTANT ============ */
+let aiHistory=[];let aiGreeted=false;let agent=null;
+const DEPTS=[...new Set(EMP.map(e=>e.d))];
+const HR_CONTEXT=`You are Loop AI, the friendly HR agent inside the 24 loops HR portal, helping HR director Carla.
+Company demo data: 49,229 employees, KPI 63.89% (down 2.34%), formats On-site 11.4% / Hybrid 32.2% / Remote 56.4%.
+Top performers: Judy Abbott (314 tasks), Martin Feeney (308), Ellen Streich (289). 14 open roles, 248 applicants. 3 leaves pending. Engineering attrition risk +8%.
+Be concise, warm and practical. You can also perform actions like adding employees, booking leave, posting announcements and logging expenses — if the user asks for one of those, they'll be guided through it automatically.`;
+
+/* ---- Tasks the agent can actually perform ---- */
+const TASKS={
+ add_employee:{title:'Add a new employee',icon:'employees',
+   intro:"Sure — let's add a new team member. I'll ask a few quick questions. 👇",
+   slots:[
+     {k:'n',q:"What's their full name?"},
+     {k:'r',q:"What's their job title?"},
+     {k:'d',q:"Which department are they in?",options:DEPTS},
+     {k:'e',q:"What's their work email?",hint:'e.g. name@24loops.co',optional:true},
+     {k:'st',q:"What's their work setup?",options:[{label:'On-site',value:'active'},{label:'Remote',value:'remote'}]},
+   ],
+   summary:d=>`• **Name:** ${d.n}\n• **Role:** ${d.r}\n• **Department:** ${d.d}\n• **Email:** ${d.e||'—'}\n• **Setup:** ${d.st==='remote'?'Remote':'On-site'}`,
+   run:d=>{EMP.unshift({id:'OM'+Math.floor(Math.random()*9e6+1e6),n:d.n,r:d.r,d:d.d,e:d.e||(d.n.toLowerCase().replace(/[^a-z]/g,'.')+'@24loops.co'),st:d.st,att:100,perf:0,tenure:'0y 0m',tasks:0});go('employees');},
+   done:d=>`✅ Done! **${d.n}** has been added to the team and now appears in the Employees page.`},
+ request_leave:{title:'Request leave',icon:'leave',
+   intro:"Happy to file a leave request. A couple of details first. 👇",
+   slots:[
+     {k:'who',q:"Who is this leave for?",options:EMP.slice(0,6).map(e=>e.n).concat(['Someone else'])},
+     {k:'type',q:"What type of leave?",options:['Annual Leave','Sick Leave','Personal','Remote Day']},
+     {k:'from',q:"Start date? (e.g. Jun 18)"},
+     {k:'to',q:"End date? (e.g. Jun 20)"},
+   ],
+   summary:d=>`• **Employee:** ${d.who}\n• **Type:** ${d.type}\n• **Dates:** ${d.from} – ${d.to}`,
+   run:d=>{LEAVE_REQ.unshift({n:d.who==='Someone else'?'New Request':d.who,type:d.type,from:d.from,to:d.to,days:2,st:'pending'});go('leave');},
+   done:d=>`✅ Leave request for **${d.who}** (${d.type}) submitted and now shows as *Pending* in the Leave page.`},
+ post_announcement:{title:'Post an announcement',icon:'announcements',
+   intro:"Let's get the word out 📣. Two quick things. 👇",
+   slots:[
+     {k:'t',q:"What's the announcement title?"},
+     {k:'p',q:"What's the message?"},
+   ],
+   summary:d=>`• **Title:** ${d.t}\n• **Message:** ${d.p}`,
+   run:d=>{ANN.unshift({i:'announcements',c:'brand',t:d.t,p:d.p,time:'just now'});go('announcements');},
+   done:d=>`✅ Posted **"${d.t}"** — it's live on the Announcements page now.`},
+ add_expense:{title:'Log an expense claim',icon:'expenses',
+   intro:"Sure, let's log an expense claim. 👇",
+   slots:[
+     {k:'who',q:"Whose claim is this?",options:EMP.slice(0,6).map(e=>e.n)},
+     {k:'desc',q:"What's it for?"},
+     {k:'cat',q:"Which category?",options:['Travel','Software','Training','Marketing','Meals']},
+     {k:'amt',q:"How much? (e.g. $120)"},
+   ],
+   summary:d=>`• **Employee:** ${d.who}\n• **For:** ${d.desc}\n• **Category:** ${d.cat}\n• **Amount:** ${d.amt}`,
+   run:d=>{go('expenses');},
+   done:d=>`✅ Logged a **${d.amt}** ${d.cat} claim for **${d.who}**. It's now pending approval.`},
+};
+function detectIntent(t){t=t.toLowerCase();
+ if(/\b(add|create|new|onboard|register|hire)\b.*\b(employee|team ?member|staff|hire|person|people|someone|worker)\b/.test(t)||/\b(new|add)\s+employee\b/.test(t))return'add_employee';
+ if(/\b(request|book|take|apply|file|log|add)\b.*\b(leave|time ?off|vacation|holiday|day ?off|pto|sick)\b/.test(t))return'request_leave';
+ if(/\b(post|create|make|draft|send|publish|write)\b.*\b(announcement|notice|update|memo|news)\b/.test(t))return'post_announcement';
+ if(/\b(add|submit|file|create|log|claim)\b.*\b(expense|claim|reimburse|receipt)\b/.test(t))return'add_expense';
+ return null;}
+
+function openAI(prefill){document.getElementById('aiDrawer').classList.add('show');
+  if(!aiGreeted){aiGreeted=true;botSay("Hi Carla 👋 I'm <b>Loop AI</b>, your HR agent. I can answer questions <i>and</i> get things done — just tell me what you need, like <b>“add a new employee”</b> or <b>“book leave for Judy”</b>.");starters();}
+  if(prefill){route(prefill);}else{document.getElementById('aiText').focus();}
+}
+function closeAI(){document.getElementById('aiDrawer').classList.remove('show');}
+function aiTool(p){openAI(p);}
+function aiScreen(name,role,score){openAI(`Give me an AI screening summary for candidate ${name} applying for ${role}. Fit score ${score}%. 3 strengths, 1 concern, recommended next step.`);}
+function addAI(who,html){const m=document.getElementById('aiMsgs');const d=document.createElement('div');d.className='ai-msg '+who;d.innerHTML=html;m.appendChild(d);m.scrollTop=m.scrollHeight;return d;}
+function botSay(t){return addAI('bot',fmt(t));}
+function fmt(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\*(.+?)\*/g,'<i>$1</i>').replace(/_(.+?)_/g,'<i>$1</i>').replace(/\n/g,'<br>');}
+function clearChips(){document.getElementById('aiSuggest').innerHTML='';}
+function chips(items){document.getElementById('aiSuggest').innerHTML=items.map(it=>{const lbl=typeof it==='string'?it:it.label;const val=typeof it==='string'?it:it.value;return `<button onclick="pickChip(this,'${String(val).replace(/'/g,"\\'")}')">${lbl}</button>`;}).join('');}
+function pickChip(btn,v){clearChips();route(v);}
+function starters(){chips([{label:'➕ Add employee',value:'Add a new employee'},{label:'📅 Request leave',value:'Request leave'},{label:'📣 Post announcement',value:'Post an announcement'},{label:'💡 Summarise this week',value:'Summarise this week in HR'}]);}
+
+/* ---- Router: agent flow first, else intent, else chat ---- */
+function sendAI(){const ta=document.getElementById('aiText');const q=ta.value.trim();if(!q)return;ta.value='';route(q);}
+async function route(q){addAI('user',fmt(q));clearChips();const low=q.toLowerCase().trim();
+  if(agent&&/^(cancel|stop|nevermind|never mind|forget it|quit)$/.test(low)){agent=null;setTask(null);botSay("No problem — cancelled. What else can I help with?");starters();return;}
+  if(agent){agentStep(q);return;}
+  const intent=detectIntent(q);
+  if(intent){startTask(intent,q);return;}
+  await chatAI(q);
+}
+function startTask(key,q){const task=TASKS[key];agent={key,step:0,data:{}};
+  if(key==='add_employee'){const m=q.match(/employee\s+(?:named\s+|called\s+)?([a-z][a-z .'\-]{1,40})/i);if(m){const nm=m[1].trim().replace(/\b\w/g,c=>c.toUpperCase());if(nm.length>1&&!/^(to|the|a|new)$/i.test(nm))agent.data.n=nm;}}
+  setTask(task.title);botSay(task.intro);askSlot();}
+function setTask(t){const el=document.getElementById('aiTask');if(!el)return;if(t){el.innerHTML='<span class="tdot"></span> Working on: <b>'+t+'</b> <span class="tcancel" onclick="route(\'cancel\')">cancel</span>';el.classList.add('show');}else{el.classList.remove('show');el.innerHTML='';}}
+function askSlot(){const task=TASKS[agent.key];
+  while(agent.step<task.slots.length&&agent.data[task.slots[agent.step].k]!==undefined)agent.step++;
+  if(agent.step>=task.slots.length){agent.step='confirm';botSay("Here's what I've got:\n\n"+task.summary(agent.data)+"\n\nShall I save it?");chips([{label:'✅ Yes, save',value:'yes'},{label:'✖ Cancel',value:'cancel'}]);return;}
+  const s=task.slots[agent.step];botSay(s.q+(s.hint?`\n_${s.hint}_`:'')+(s.optional?`\n_(optional — type “skip” to leave blank)_`:''));
+  if(s.options)chips(s.options.concat(s.optional?[{label:'Skip',value:'skip'}]:[]));}
+function agentStep(ans){const task=TASKS[agent.key];const low=ans.toLowerCase().trim();
+  if(agent.step==='confirm'){
+    if(/^(y|yes|yep|yeah|sure|ok|okay|confirm|do it|save|go)/.test(low)){const d=agent.data;const msg=task.done(d);agent=null;setTask(null);task.run(d);botSay(msg);setTimeout(starters,400);}
+    else if(/^(n|no|cancel|stop|nope)/.test(low)){agent=null;setTask(null);botSay("Okay, cancelled — nothing was saved. Anything else?");starters();}
+    else{botSay("Just tap **Yes, save** to confirm or **Cancel** to discard.");chips([{label:'✅ Yes, save',value:'yes'},{label:'✖ Cancel',value:'cancel'}]);}
+    return;}
+  const s=task.slots[agent.step];
+  if(!(s.optional&&/^skip$/.test(low)))agent.data[s.k]=ans.trim();
+  agent.step++;askSlot();}
+
+/* ---- General Q&A via Claude, graceful fallback ---- */
+async function chatAI(q){aiHistory.push({role:'user',content:q});const typing=addAI('bot','<div class="typing"><span></span><span></span><span></span></div>');
+  try{const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,system:HR_CONTEXT,messages:aiHistory})});
+    if(!res.ok)throw 0;const data=await res.json();const text=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n').trim()||aiFallback(q);
+    typing.innerHTML=fmt(text);aiHistory.push({role:'assistant',content:text});}
+  catch(e){typing.innerHTML=fmt(aiFallback(q));}
+  const m=document.getElementById('aiMsgs');m.scrollTop=m.scrollHeight;setTimeout(starters,300);}
+function aiFallback(q){const l=q.toLowerCase();
+  if(l.includes('top perform'))return"Your top performers this period:\n\n**1. Judy Abbott** — 314 tasks\n**2. Martin Feeney** — 308\n**3. Ellen Streich** — 289\n\nEllen is trending up fast — worth a promotion chat.";
+  if(l.includes('week')||l.includes('summar'))return"**This week at 24 loops**\n\n• Attendance steady at ~90%\n• 3 leave requests pending review\n• Engineering attrition risk up 8% — suggest 1:1s\n• Aria Kapoor (96% fit) ready for an Engineering Manager offer";
+  if(l.includes('job description')||l.includes('jd'))return"**Senior Frontend Engineer — 24 loops**\n\nWe're hiring a Senior Frontend Engineer to craft delightful, performant interfaces.\n\n**You'll:** build React apps, mentor engineers, shape our design system.\n**You have:** 5+ yrs frontend, strong JS/TS, an eye for UX.\n\nRemote-friendly · competitive pay.";
+  if(l.includes('leave')||l.includes('policy'))return"**Leave policy (summary)**\n\n• 20 annual + 10 sick days/year\n• Request via the Leave tab; manager approves\n• Up to 5 unused annual days roll over\n\nWant me to file a request? Just say *request leave*.";
+  return"Got it. I can answer HR questions or take an action for you — try *add a new employee*, *request leave*, *post an announcement*, or *log an expense*.\n\n_(Live AI is unavailable in this preview, so this is a sample reply — the task actions above work fully.)_";}
+
+document.querySelectorAll('.nav-item').forEach(n=>{n.tabIndex=0;n.setAttribute('role','button');n.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();n.click();}});});
+setIcons();renderNotif();go('dashboard');
+</script>
+</body>

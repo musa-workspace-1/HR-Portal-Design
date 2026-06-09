@@ -6,10 +6,10 @@ import {
 
 export default function Offboarding() {
   return (
-    <div className="max-w-7xl mx-auto space-y-6 pb-24 lg:pb-0">
+    <div className="stagger">
       
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="sec-head">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Offboarding</h1>
           <p className="text-sm text-slate-500 mt-1">Manage employee exits, equipment returns, and final documentation.</p>
@@ -17,7 +17,7 @@ export default function Offboarding() {
       </div>
 
       {/* 1. Dynamic Metric Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
         <MetricCard 
           title="Active Workflows" 
           value="0" 
@@ -46,7 +46,7 @@ export default function Offboarding() {
       </div>
 
       {/* 2. Empty Workspace / Zero-State Component */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col items-center justify-center p-12 text-center min-h-[400px]">
+      <div className="panel">
         <div className="w-20 h-20 bg-slate-50 rounded-2xl flex items-center justify-center mb-6 border border-slate-100">
           <Layers size={40} className="text-slate-400" strokeWidth={1.5} />
         </div>

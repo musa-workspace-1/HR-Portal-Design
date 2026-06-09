@@ -1,7 +1,4 @@
 
-@tailwind components;
-@tailwind utilities;
-
 :root{
   --canvas-top:#f3eee7;
   --canvas-bot:#e9d3bd;
@@ -437,9 +434,6 @@ html[data-theme="dark"] .stat-mini .sv,html[data-theme="dark"] .kpi-num,html[dat
 /* ============================================================
    LIQUID GLASS — iOS-style crystal material (same palette/fonts)
    ============================================================ */
-@tailwind components;
-@tailwind utilities;
-
 :root{
   --lg-edge:rgba(255,255,255,.62);
   --lg-lip:rgba(255,255,255,.9);
@@ -523,9 +517,6 @@ html[data-theme="dark"] .pill{box-shadow:inset 0 1px 1px rgba(255,255,255,.08)}
 /* ============================================================
    CRYSTAL GLASS v2 — built from paint (renders without blur)
    ============================================================ */
-@tailwind components;
-@tailwind utilities;
-
 :root{
   --cg-hi:rgba(255,255,255,.95);   /* top-left lit edge */
   --cg-lo:rgba(255,255,255,.22);   /* bottom-right edge */

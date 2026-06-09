@@ -55,10 +55,10 @@ export default function SalaryStructure() {
   ]);
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6 pb-24 lg:pb-0">
+    <div className="stagger">
       
       {/* 1. Page Title & Action Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="sec-head">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Salary Structure</h1>
           <p className="text-sm text-slate-500 mt-1">Define and manage organizational earning and withholding rules.</p>
@@ -71,7 +71,7 @@ export default function SalaryStructure() {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col min-h-[500px]">
+      <div className="panel">
         
         {/* 2. Global Query & Parameter Filtering */}
         <div className="p-4 border-b border-slate-100 flex flex-col lg:flex-row gap-4 items-center justify-between bg-slate-50/30">
@@ -114,7 +114,7 @@ export default function SalaryStructure() {
         {/* 3. Salary Components Ledger & Variable Metrics */}
         <div className="w-full">
           <table className="w-full text-left text-sm text-slate-600">
-            <thead className="bg-slate-50/50 text-slate-500 font-medium text-xs uppercase tracking-wider border-b border-slate-100">
+            <thead >
               <tr>
                 <th className="px-4 py-3">Component Name</th>
                 <th className="px-4 py-3">Type</th>

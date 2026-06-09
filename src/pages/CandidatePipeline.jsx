@@ -39,7 +39,7 @@ export default function CandidatePipeline() {
   }, []);
 
   return (
-    <div className="max-w-full mx-auto space-y-6 pb-24 lg:pb-0 h-full flex flex-col">
+    <div className="stagger">
       
       {/* 1. Page Title & Action Bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 shrink-0">

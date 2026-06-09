@@ -1,69 +1,64 @@
 import React, { useState } from 'react';
-import { 
-  Download, Plus, Users, UserCheck, UserPlus, 
-  Search, Filter, MoreHorizontal, ChevronLeft, ChevronRight 
-} from 'lucide-react';
+import Icon from '../components/Icon';
 import AddEmployee from './AddEmployee';
 
-export default function EmployeeDirectory() {
+export default function EmployeeDirectory({ view, setView }) {
   const [searchTerm, setSearchTerm] = useState('');
-  const [view, setView] = useState('list');
+  const [departmentFilter, setDepartmentFilter] = useState('');
 
   const initialEmployees = [
     {
       id: 1,
       name: 'Sarah Ahmed',
       email: 'sarah.ahmed@24loops.com',
-      avatar: 'https://i.pravatar.cc/150?u=sarah',
       department: 'Creative & Design',
       jobTitle: 'Creative Director',
-      employmentType: 'Full Time',
-      startDate: '2023-01-15',
-      status: 'Active',
+      status: 'active',
+      att: 98,
+      perf: 4.8
     },
     {
       id: 2,
       name: 'Syed Muhammad Saad',
       email: 'syed.saad@24loops.com',
-      avatar: 'https://i.pravatar.cc/150?u=syed',
       department: 'Product',
       jobTitle: 'Product Design Manager',
-      employmentType: 'Full Time',
-      startDate: '2022-08-10',
-      status: 'Active',
+      status: 'active',
+      att: 95,
+      perf: 4.6
     },
     {
       id: 3,
       name: 'Umair Khan',
       email: 'umair.khan@24loops.com',
-      avatar: 'https://i.pravatar.cc/150?u=umair',
       department: 'Engineering',
       jobTitle: 'Frontend Developer',
-      employmentType: 'Contract',
-      startDate: '2024-03-01',
-      status: 'Onboarding',
+      status: 'pending',
+      att: 0,
+      perf: 0
     },
     {
       id: 4,
       name: 'Elena Rodriguez',
       email: 'elena.rodriguez@24loops.com',
-      avatar: 'https://i.pravatar.cc/150?u=elena',
       department: 'Management',
       jobTitle: 'Product Manager',
-      employmentType: 'Full Time',
-      startDate: '2021-06-15',
-      status: 'Active',
+      status: 'leave',
+      att: 92,
+      perf: 4.9
     },
   ];
 
   const [employeesList, setEmployeesList] = useState(initialEmployees);
 
-  const filteredEmployees = employeesList.filter(employee =>
-    employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    employee.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    employee.jobTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    employee.department.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredEmployees = employeesList.filter(employee => {
+    const matchesSearch = employee.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          employee.jobTitle.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesDept = departmentFilter === '' || employee.department === departmentFilter;
+    return matchesSearch && matchesDept;
+  });
+
+  const departments = [...new Set(employeesList.map(e => e.department))];
 
   if (view === 'add') {
     return (
@@ -75,12 +70,11 @@ export default function EmployeeDirectory() {
               id: prev.length + 1,
               name: newEmp.fullName,
               email: newEmp.personalEmail || `${newEmp.fullName.toLowerCase().replace(/\s+/g, '.')}@24loops.com`,
-              avatar: newEmp.avatarUrl || 'https://i.pravatar.cc/150?u=empty',
               department: newEmp.department || 'Creative & Design',
               jobTitle: newEmp.jobTitle || 'UI/UX Designer',
-              employmentType: newEmp.employmentType || 'Full Time',
-              startDate: newEmp.startDate || new Date().toISOString().split('T')[0],
-              status: 'Onboarding',
+              status: 'pending',
+              att: 0,
+              perf: 0
             },
             ...prev
           ]);
@@ -91,153 +85,70 @@ export default function EmployeeDirectory() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6 pb-24 lg:pb-0">
-      
-      {/* 1. Page Header Controls */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Employee Directory</h1>
-          <p className="text-sm text-slate-500 mt-1">Manage your team members and their employment details.</p>
+    <div>
+      <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', alignItems: 'center', flexWrap: 'wrap' }}>
+        <div className="search" style={{ margin: 0, width: '300px' }}>
+          <Icon name="search" />
+          <input 
+            placeholder="Search employees..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
-        <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors shadow-sm">
-            <Download size={16} />
-            Export
-          </button>
-          <button 
-            onClick={() => setView('add')}
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:opacity-90 transition-colors shadow-sm cursor-pointer"
-          >
-            <Plus size={16} />
-            Add New Employee
-          </button>
-        </div>
-      </div>
-
-      {/* 2. Summary Metrics Cards (KPIs) */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <KpiCard title="Total Employees" value="1,245" icon={<Users size={20} className="text-primary" />} color="bg-primary/10 group-hover:bg-white transition-colors" />
-        <KpiCard title="Active" value="1,180" icon={<UserCheck size={20} className="text-emerald-600" />} color="bg-emerald-50" />
-        <KpiCard title="Onboarding" value="23" icon={<UserPlus size={20} className="text-amber-600" />} color="bg-amber-50" />
-      </div>
-
-      {/* 3. Employee Directory Data Table */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col">
         
-        {/* Table Toolbar */}
-        <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row gap-3 justify-between">
-          <div className="relative max-w-sm w-full">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
-            <input 
-              type="text" 
-              placeholder="Search employees..." 
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-primary/50 transition-colors"
-            />
-          </div>
-          <button className="flex items-center justify-center gap-2 px-4 py-2 bg-slate-50 border border-slate-200 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-100 transition-colors">
-            <Filter size={16} />
-            More Filters
-          </button>
-        </div>
+        <select 
+          className="select" 
+          style={{ margin: 0 }}
+          value={departmentFilter}
+          onChange={(e) => setDepartmentFilter(e.target.value)}
+        >
+          <option value="">All Departments</option>
+          {departments.map(d => <option key={d} value={d}>{d}</option>)}
+        </select>
+        
+        <button className="btn primary" style={{ marginLeft: 'auto' }} onClick={() => setView('add')}>
+          <Icon name="plus" /> Add Employee
+        </button>
+      </div>
 
-        {/* Table Content */}
-        <div className="w-full">
-          <table className="w-full text-left text-sm text-slate-600">
-            <thead className="bg-slate-50/50 text-slate-500 font-medium text-xs uppercase tracking-wider border-b border-slate-100">
-              <tr>
-                <th className="px-4 py-3">Name</th>
-                <th className="px-4 py-3">Department</th>
-                <th className="px-4 py-3">Job Title</th>
-                <th className="px-4 py-3">Employment Type</th>
-                <th className="px-4 py-3">Start Date</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {filteredEmployees.map((employee) => (
-                <tr key={employee.id} className="hover:bg-slate-50/50 transition-colors">
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-3">
-                      <img src={employee.avatar} alt={employee.name} className="w-10 h-10 rounded-full object-cover border border-slate-200" />
-                      <div>
-                        <div className="font-semibold text-slate-900">{employee.name}</div>
-                        <div className="text-xs text-slate-500">{employee.email}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3">{employee.department}</td>
-                  <td className="px-4 py-3">{employee.jobTitle}</td>
-                  <td className="px-4 py-3">{employee.employmentType}</td>
-                  <td className="px-4 py-3">{employee.startDate}</td>
-                  <td className="px-4 py-3">
-                    <StatusBadge status={employee.status} />
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <button className="text-primary hover:text-primary font-medium text-sm px-3 py-1.5 rounded-md hover:bg-primary/10 transition-colors">
-                      View
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Pagination & Footnote Controls */}
-        <div className="p-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-500 bg-slate-50/30">
-          <div>
-            Showing <span className="font-medium text-slate-900">1</span> to <span className="font-medium text-slate-900">{filteredEmployees.length}</span> of <span className="font-medium text-slate-900">{filteredEmployees.length}</span> entries
-          </div>
-          <div className="flex items-center gap-4">
-            <button className="flex items-center gap-1 text-slate-600 hover:text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-              <ChevronLeft size={16} />
-              Previous
-            </button>
-            <div className="font-medium text-slate-900">
-              1 / 1
+      <div className="emp-grid stagger">
+        {filteredEmployees.length === 0 ? (
+          <div className="empty">No employees found.</div>
+        ) : (
+          filteredEmployees.map((e, i) => (
+            <div key={e.id} className="emp-card" style={{ animationDelay: `${i * 35}ms` }}>
+              <div className="av" style={{ background: 'var(--surface-3)', width: '64px', height: '64px', fontSize: '24px' }}>
+                {e.name.charAt(0)}
+              </div>
+              <h4>{e.name}</h4>
+              <div className="role">{e.jobTitle}</div>
+              <StatusPill status={e.status} />
+              <div className="meta">
+                <div><b>{e.att}%</b>Attendance</div>
+                <div><b>{e.perf > 0 ? e.perf : '-'}</b>Rating</div>
+              </div>
             </div>
-            <button className="flex items-center gap-1 text-slate-600 hover:text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-              Next
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        </div>
+          ))
+        )}
       </div>
     </div>
   );
 }
 
-function KpiCard({ title, value, icon, color }) {
-  return (
-    <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4 group hover:bg-gradient-to-br hover:from-primary hover:to-blue-950 transition-all duration-300 cursor-pointer border-transparent hover:border-transparent hover:shadow-md">
-      <div className={`p-4 rounded-xl ${color}`}>
-        {icon}
-      </div>
-      <div>
-        <h3 className="text-slate-500 group-hover:text-blue-100 transition-colors text-sm font-medium mb-1">{title}</h3>
-        <div className="text-2xl font-bold text-slate-900 group-hover:text-white transition-colors">{value}</div>
-      </div>
-    </div>
-  );
-}
-
-function StatusBadge({ status }) {
-  let colorClass = 'bg-slate-100 text-slate-700';
+function StatusPill({ status }) {
+  const map = {
+    active: ['green', 'Active'],
+    leave: ['gold', 'On Leave'],
+    remote: ['sky', 'Remote'],
+    pending: ['gold', 'Pending'],
+    approved: ['green', 'Approved'],
+    rejected: ['coral', 'Rejected']
+  };
+  const [color, label] = map[status] || ['gray', status];
   
-  if (status === 'Active') {
-    colorClass = 'bg-emerald-100 text-emerald-700 border-emerald-200';
-  } else if (status === 'Onboarding') {
-    colorClass = 'bg-amber-100 text-amber-700 border-amber-200';
-  } else if (status === 'Terminated') {
-    colorClass = 'bg-rose-100 text-rose-700 border-rose-200';
-  }
-
   return (
-    <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${colorClass}`}>
-      {status}
+    <span className={`pill ${color}`}>
+      <span className="dotc"></span>{label}
     </span>
   );
 }
