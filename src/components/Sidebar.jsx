@@ -1,12 +1,12 @@
 import React from 'react';
-import { Home, Users, Clock, Briefcase, DollarSign, ChevronDown, Settings, HelpCircle } from 'lucide-react';
+import { Home, Users, Clock, Briefcase, DollarSign, ChevronDown } from 'lucide-react';
 
 export default function Sidebar({ currentPage, setCurrentPage, activeDropdown, toggleDropdown }) {
   return (
     <aside className="hidden lg:flex flex-col w-60 bg-white border-r border-slate-100 flex-shrink-0 z-20 shadow-sm pt-2">
 
       <div className="px-4 py-3 flex flex-col items-center border-b border-slate-100">
-        <img src="https://i.pravatar.cc/150?u=shahzaib" alt="Shah Zaib Kazmi" className="w-14 h-14 rounded-full object-cover border-2 border-white shadow-md mb-1.5" />
+        <img src="/shah_zaib_avatar.png" alt="Shah Zaib Kazmi" className="w-14 h-14 rounded-full object-cover border-2 border-white shadow-md mb-1.5" />
         <h3 className="font-bold text-slate-900 text-sm">Shah Zaib Kazmi</h3>
         <p className="text-[10px] text-slate-500 font-medium">HR Manager</p>
       </div>
@@ -167,10 +167,6 @@ export default function Sidebar({ currentPage, setCurrentPage, activeDropdown, t
         </div>
       </nav>
 
-      <div className="px-3 py-2 border-t border-slate-100 space-y-0.5">
-        <NavItem icon={<Settings size={20} />} label="Settings" />
-        <NavItem icon={<HelpCircle size={20} />} label="Help Center" />
-      </div>
     </aside>
   );
 }

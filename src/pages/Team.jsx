@@ -56,7 +56,7 @@ export default function Team() {
             <>
               <div className="flex items-center gap-3 p-3 rounded-xl bg-primary/5 cursor-pointer border border-primary/10">
                 <div className="relative">
-                  <img src="https://i.pravatar.cc/150?u=shahzaib" alt="Shah Zaib" className="w-10 h-10 rounded-full object-cover" />
+                  <img src="/shah_zaib_avatar.png" alt="Shah Zaib" className="w-10 h-10 rounded-full object-cover" />
                   <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white"></div>
                 </div>
                 <div className="flex-1 min-w-0">
@@ -188,7 +188,7 @@ export default function Team() {
                   
                   <div className="space-y-3">
                     <div className="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl transition-colors group cursor-pointer border border-transparent">
-                      <img src="https://i.pravatar.cc/150?u=shahzaib" alt="Shah Zaib" className="w-10 h-10 rounded-full object-cover border border-slate-200" />
+                      <img src="/shah_zaib_avatar.png" alt="Shah Zaib" className="w-10 h-10 rounded-full object-cover border border-slate-200" />
                       <div className="flex-1 font-semibold text-slate-900 text-sm">Shah Zaib</div>
                       <button className="w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 group-hover:bg-white group-hover:text-primary group-hover:border-primary/30 transition-all">
                         <MessageSquare size={16} />

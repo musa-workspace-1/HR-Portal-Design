@@ -3,11 +3,13 @@ import {
   Download, Plus, Users, UserCheck, UserPlus, 
   Search, Filter, MoreHorizontal, ChevronLeft, ChevronRight 
 } from 'lucide-react';
+import AddEmployee from './AddEmployee';
 
 export default function EmployeeDirectory() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [view, setView] = useState('list');
 
-  const employees = [
+  const initialEmployees = [
     {
       id: 1,
       name: 'Sarah Ahmed',
@@ -54,6 +56,40 @@ export default function EmployeeDirectory() {
     },
   ];
 
+  const [employeesList, setEmployeesList] = useState(initialEmployees);
+
+  const filteredEmployees = employeesList.filter(employee =>
+    employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    employee.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    employee.jobTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    employee.department.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  if (view === 'add') {
+    return (
+      <AddEmployee 
+        onCancel={() => setView('list')} 
+        onAdd={(newEmp) => {
+          setEmployeesList(prev => [
+            {
+              id: prev.length + 1,
+              name: newEmp.fullName,
+              email: newEmp.personalEmail || `${newEmp.fullName.toLowerCase().replace(/\s+/g, '.')}@24loops.com`,
+              avatar: newEmp.avatarUrl || 'https://i.pravatar.cc/150?u=empty',
+              department: newEmp.department || 'Creative & Design',
+              jobTitle: newEmp.jobTitle || 'UI/UX Designer',
+              employmentType: newEmp.employmentType || 'Full Time',
+              startDate: newEmp.startDate || new Date().toISOString().split('T')[0],
+              status: 'Onboarding',
+            },
+            ...prev
+          ]);
+          setView('list');
+        }}
+      />
+    );
+  }
+
   return (
     <div className="max-w-7xl mx-auto space-y-6 pb-24 lg:pb-0">
       
@@ -68,7 +104,10 @@ export default function EmployeeDirectory() {
             <Download size={16} />
             Export
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:opacity-90 transition-colors shadow-sm">
+          <button 
+            onClick={() => setView('add')}
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:opacity-90 transition-colors shadow-sm cursor-pointer"
+          >
             <Plus size={16} />
             Add New Employee
           </button>
@@ -118,7 +157,7 @@ export default function EmployeeDirectory() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {employees.map((employee) => (
+              {filteredEmployees.map((employee) => (
                 <tr key={employee.id} className="hover:bg-slate-50/50 transition-colors">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
@@ -150,7 +189,7 @@ export default function EmployeeDirectory() {
         {/* Pagination & Footnote Controls */}
         <div className="p-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-500 bg-slate-50/30">
           <div>
-            Showing <span className="font-medium text-slate-900">1</span> to <span className="font-medium text-slate-900">{employees.length}</span> of <span className="font-medium text-slate-900">{employees.length}</span> entries
+            Showing <span className="font-medium text-slate-900">1</span> to <span className="font-medium text-slate-900">{filteredEmployees.length}</span> of <span className="font-medium text-slate-900">{filteredEmployees.length}</span> entries
           </div>
           <div className="flex items-center gap-4">
             <button className="flex items-center gap-1 text-slate-600 hover:text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
