@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-import Chart from 'chart.js/auto';
 import Icon from '../components/Icon';
 
 export default function PayrollDashboard() {
@@ -18,7 +17,7 @@ export default function PayrollDashboard() {
       const line = cs.getPropertyValue('--line') || '#ece4d8';
       const ink = cs.getPropertyValue('--ink-3') || '#9c9388';
 
-      chartInstance.current = new Chart(ctx, {
+      chartInstance.current = new window.Chart(ctx, {
         type: 'bar',
         data: {
           labels: ['Eng', 'Sales', 'Design', 'Mktg', 'Ops', 'Fin'],
