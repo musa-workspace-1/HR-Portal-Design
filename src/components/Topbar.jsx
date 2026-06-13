@@ -1,35 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Icon from './Icon';
+import { Search, Bell, ChevronDown, User, Settings, HelpCircle, Globe, LogOut, Calendar, Megaphone, Moon, Sun } from 'lucide-react';
 
-const PAGE_TITLES = {
-  'dashboard': "Dashboard",
-  'employee-directory': "Employees",
-  'attendance-dashboard': "Attendance",
-  'attendance-log': "Attendance Log",
-  'shift': "Shift",
-  'overtime': "Overtime",
-  'leave': "Leave Management",
-  'aihub': "AI Hub",
-  'recruitment-dashboard': "Recruitment",
-  'candidate-pipeline': "Candidate Pipeline",
-  'interviews': "Interviews",
-  'offer-letters': "Offer Letters",
-  'onboarding': "Onboarding",
-  'offboarding': "Offboarding",
-  'team': "Team",
-  'performance': "Performance",
-  'payroll-dashboard': "Payroll",
-  'salary-structure': "Salary Structure",
-  'expenses': "Expenses",
-  'documents': "Documents",
-  'announcements': "Announcements",
-  'settings': "Settings",
-  'profile': "Profile",
-  'help': "Help",
-  'notifications': "Notifications"
-};
-
-export default function Topbar({ currentPage, setCurrentPage, notifications = [], markAllNotificationsAsRead, markNotificationAsRead }) {
+export default function Topbar({ currentPage, setCurrentPage, notifications = [], markAllNotificationsAsRead, markNotificationAsRead, isDarkMode, toggleDarkMode }) {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
 
@@ -53,136 +25,157 @@ export default function Topbar({ currentPage, setCurrentPage, notifications = []
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
+  const formatTitle = (pageStr) => {
+    if (!pageStr) return 'Dashboard';
+    
+    return pageStr
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
+  const pageTitle = formatTitle(currentPage);
+
   return (
-    <header className="topbar">
+    <div className="topbar">
       <div className="page-title">
-        <h2>{PAGE_TITLES[currentPage] || "Dashboard"}</h2>
+        <h2>{pageTitle}</h2>
+        {currentPage === 'dashboard' && (
+          <p style={{ fontSize: '12px', color: 'var(--ink-3)', marginTop: '4px' }}>Welcome Back, Shah Zaib!</p>
+        )}
       </div>
 
       <div className="search">
-        <Icon name="search" />
-        <input placeholder="Search for actions or people..." readOnly />
-        <kbd>⌘K</kbd>
+        <Search size={16} />
+        <input type="text" placeholder="Search..." />
       </div>
 
-      <button className="icon-btn" title="AI Assistant">
-        <Icon name="spark" />
+      <button className="icon-btn" title="Toggle Theme" onClick={toggleDarkMode}>
+        {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
       </button>
 
-      <button className="icon-btn" title="Theme" onClick={() => document.documentElement.dataset.theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'}>
-        <Icon name="theme" />
-      </button>
-
-      {/* Notifications Dropdown */}
-      <div style={{ position: 'relative' }} ref={notificationsRef}>
-        <button 
-          className="icon-btn" 
-          title="Notifications"
+      <div className="relative" ref={notificationsRef}>
+        <div 
           onClick={() => {
             setNotificationsOpen(!notificationsOpen);
             setProfileMenuOpen(false);
           }}
+          className="icon-btn"
         >
-          <Icon name="bell" />
-          {unreadCount > 0 && <span className="dot"></span>}
-        </button>
+          <Bell size={18} />
+          {unreadCount > 0 && <div className="dot"></div>}
+        </div>
 
         {notificationsOpen && (
-          <div className="notif-panel" style={{ display: 'block', top: '100%', right: '0', position: 'absolute', marginTop: '12px' }}>
+          <div className="notif-panel show" style={{ position: 'absolute', top: '56px', right: '0' }}>
             <div className="notif-head">
               <h3>Notifications</h3>
               {unreadCount > 0 && (
-                <span className="link" style={{ fontSize: '12px', color: 'var(--brand)', fontWeight: 700, cursor: 'pointer' }} onClick={markAllNotificationsAsRead}>
+                <button 
+                  onClick={() => markAllNotificationsAsRead()}
+                  className="btn ghost" style={{ padding: '4px 8px', fontSize: '10px' }}
+                >
                   Mark all read
-                </span>
+                </button>
               )}
             </div>
-            <div>
+            
+            <div style={{ maxHeight: '320px', overflowY: 'auto' }}>
               {notifications.length === 0 ? (
-                <div style={{ padding: '24px', textAlign: 'center', fontSize: '13px', color: 'var(--ink-3)' }}>
-                  All caught up!
-                </div>
+                <div className="empty">All caught up! No notifications.</div>
               ) : (
                 notifications.slice(0, 5).map((notif) => (
                   <div 
                     key={notif.id}
                     onClick={() => markNotificationAsRead(notif.id)}
-                    style={{
-                      padding: '12px 16px',
-                      display: 'flex',
-                      gap: '12px',
-                      cursor: 'pointer',
-                      borderBottom: '1px solid var(--line)',
-                      background: notif.isRead ? 'transparent' : 'var(--brand-softer)'
-                    }}
+                    className="notif-item"
                   >
-                    <div style={{ 
-                      width: '32px', height: '32px', borderRadius: '8px', 
-                      background: notif.type === 'leave' ? 'var(--coral-soft)' : 'var(--sky-soft)',
-                      color: notif.type === 'leave' ? 'var(--coral)' : 'var(--sky)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center'
+                    <div className="ni" style={{
+                      background: notif.type === 'leave' ? 'var(--sage-soft)' : 'var(--sky-soft)',
+                      color: notif.type === 'leave' ? 'var(--sage)' : 'var(--sky)'
                     }}>
-                      <Icon name={notif.type === 'leave' ? 'clock' : 'alert'} style={{ width: '16px', height: '16px' }} />
+                      {notif.type === 'leave' ? <Calendar size={16} /> : <Megaphone size={16} />}
                     </div>
-                    <div style={{ flex: 1, fontSize: '12.5px', lineHeight: 1.4 }}>
-                      <b style={{ color: 'var(--ink)' }}>{notif.title}</b>
-                      <p style={{ color: 'var(--ink-2)', marginTop: '2px' }}>{notif.message}</p>
-                      <div style={{ fontSize: '11px', color: 'var(--ink-3)', marginTop: '4px' }}>{notif.time}</div>
+                    
+                    <div style={{ flex: 1 }}>
+                      <p><b>{notif.title}</b> — {notif.message}</p>
+                      <div className="nt">{notif.time} {notif.isRead ? '' : '• New'}</div>
                     </div>
                   </div>
                 ))
               )}
             </div>
+            
             <div 
-              style={{ padding: '12px', textAlign: 'center', fontSize: '12px', fontWeight: 700, color: 'var(--brand)', cursor: 'pointer', borderTop: '1px solid var(--line)' }}
-              onClick={() => {
-                setCurrentPage('notifications');
-                setNotificationsOpen(false);
-              }}
+              onClick={() => { setCurrentPage('notifications'); setNotificationsOpen(false); }}
+              style={{ padding: '12px', textAlign: 'center', fontSize: '12px', fontWeight: 'bold', color: 'var(--brand)', cursor: 'pointer', borderTop: '1px solid var(--line-2)' }}
             >
-              View All
+              View All Notifications
             </div>
           </div>
         )}
       </div>
 
-      {/* Profile Dropdown */}
-      <div style={{ position: 'relative' }} ref={profileRef}>
+      <div className="relative" ref={profileRef}>
         <div 
-          className="avatar-btn" 
-          onClick={() => {
-            setProfileMenuOpen(!profileMenuOpen);
-            setNotificationsOpen(false);
-          }}
+          onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+          className="avatar-btn"
         >
-          <div className="av" style={{ background: 'linear-gradient(135deg, #c79a3a, #bd7942)' }}>SK</div>
-          <div className="nm">Shah Zaib Kazmi</div>
-          <Icon name="down" style={{ width: '14px', height: '14px', color: 'var(--ink-3)' }} />
+          <div className="av" style={{background:'linear-gradient(135deg, var(--sky), #3a5c78)'}}>SK</div>
+          <div className="nm">Shah Zaib</div>
+          <ChevronDown size={14} color="var(--ink-3)" style={{ marginLeft: '-2px' }} />
         </div>
 
         {profileMenuOpen && (
-          <div className="notif-panel" style={{ display: 'block', top: '100%', right: '0', position: 'absolute', marginTop: '12px', width: '280px', padding: 0 }}>
-            <div style={{ padding: '16px', borderBottom: '1px solid var(--line)' }}>
-              <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                <img src="/shah_zaib_avatar.png" alt="Profile" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
-                <div>
-                  <div style={{ fontWeight: 700, fontSize: '14px' }}>Shah Zaib Kazmi</div>
-                  <div style={{ fontSize: '12px', color: 'var(--ink-3)' }}>HR Manager</div>
-                </div>
-              </div>
+          <div className="card" style={{ position: 'absolute', top: '56px', right: '0', width: '260px', zIndex: 100, padding: '12px' }}>
+            <div style={{ paddingBottom: '12px', borderBottom: '1px solid var(--line)', marginBottom: '12px' }}>
+              <h4 style={{ fontWeight: 'bold', fontSize: '14px', fontFamily: 'var(--display)' }}>Shah Zaib Kazmi</h4>
+              <div style={{ fontSize: '11px', color: 'var(--ink-3)' }}>ID: 69e1de1dc494d728359309d1</div>
             </div>
-            <div style={{ padding: '8px' }}>
-              <div className="nav-item" onClick={() => { setCurrentPage('profile'); setProfileMenuOpen(false); }}>
-                <Icon name="user" /> My Profile
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '12px', borderBottom: '1px solid var(--line)', paddingBottom: '12px' }}>
+              <DropdownItem 
+                icon={<User size={16} />} 
+                label="My Profile" 
+                onClick={() => { setCurrentPage('profile'); setProfileMenuOpen(false); }}
+              />
+              <DropdownItem 
+                icon={<Bell size={16} />} 
+                label="Notifications" 
+                onClick={() => { setCurrentPage('notifications'); setProfileMenuOpen(false); }}
+              />
+              <DropdownItem 
+                icon={<Settings size={16} />} 
+                label="Settings" 
+                onClick={() => { setCurrentPage('settings'); setProfileMenuOpen(false); }}
+              />
+              <DropdownItem 
+                icon={<HelpCircle size={16} />} 
+                label="Help" 
+                onClick={() => { setCurrentPage('help'); setProfileMenuOpen(false); }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ fontSize: '12px', color: 'var(--ink-2)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Globe size={14} /> English
               </div>
-              <div className="nav-item" onClick={() => { setCurrentPage('settings'); setProfileMenuOpen(false); }}>
-                <Icon name="settings" /> Settings
-              </div>
+              <button className="pill coral" style={{ border: 'none', cursor: 'pointer' }}>
+                <LogOut size={12} /> Sign Out
+              </button>
             </div>
           </div>
         )}
       </div>
+    </div>
+  );
+}
 
-    </header>
+function DropdownItem({ icon, label, onClick }) {
+  return (
+    <div onClick={onClick} className="nav-item" style={{ padding: '8px 12px', margin: '0', fontSize: '13px' }}>
+      {icon}
+      <span>{label}</span>
+    </div>
   );
 }

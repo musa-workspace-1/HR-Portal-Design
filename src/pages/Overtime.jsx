@@ -58,98 +58,96 @@ export default function Overtime() {
   };
 
   return (
-    <div className="stagger">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       
-      {/* 1. Page Title & Action Bar */}
-      <div className="sec-head">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Overtime Requests</h1>
-          <p className="text-sm text-slate-500 mt-1">Review and manage extra work hours submitted by your team.</p>
-        </div>
-      </div>
 
-      <div className="panel">
+
+      <div className="panel" style={{ padding: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         
         {/* 2. Data Query & Status Filter Bar */}
-        <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row gap-4 items-center justify-between bg-slate-50/30">
+        <div style={{ padding: '20px', borderBottom: '1px solid var(--line)', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '16px', background: 'var(--surface-2)' }}>
           
-          <div className="relative w-full sm:max-w-xs">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+          <div className="search" style={{ margin: 0, width: '100%', maxWidth: '300px' }}>
+            <Search />
             <input 
               type="text" 
               placeholder="Search..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-primary/50 transition-colors shadow-sm"
             />
           </div>
 
-          <div className="relative w-full sm:w-auto min-w-[140px]">
-            <select className="w-full appearance-none px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 focus:outline-none focus:border-primary/50 transition-colors shadow-sm cursor-pointer">
+          <div style={{ position: 'relative', width: '100%', maxWidth: 'max-content', minWidth: '140px', margin: 0 }} className="field">
+            <select className="glass-ctrl" style={{ width: '100%', margin: 0 }}>
               <option>Status</option>
               <option>Pending</option>
               <option>Approved</option>
               <option>Rejected</option>
             </select>
-            <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
           </div>
 
         </div>
 
         {/* 3. Overtime Requests Data Table */}
-        <div className="w-full">
-          <table className="w-full text-left text-sm text-slate-600">
-            <thead >
+        <div style={{ width: '100%', overflowX: 'auto' }}>
+          <table>
+            <thead>
               <tr>
-                <th className="px-4 py-3">ID</th>
-                <th className="px-4 py-3">Employee</th>
-                <th className="px-4 py-3">Overtime Date</th>
-                <th className="px-4 py-3">Hours</th>
-                <th className="px-4 py-3">Reason</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3 text-right">Actions</th>
+                <th style={{ paddingTop: '24px' }}>ID</th>
+                <th style={{ paddingTop: '24px' }}>Employee</th>
+                <th style={{ paddingTop: '24px' }}>Overtime Date</th>
+                <th style={{ paddingTop: '24px' }}>Hours</th>
+                <th style={{ paddingTop: '24px' }}>Reason</th>
+                <th style={{ paddingTop: '24px' }}>Status</th>
+                <th style={{ textAlign: 'right', paddingTop: '24px' }}>Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody>
               {overtimeRequests.map((record) => (
-                <tr key={record.id} className="hover:bg-slate-50/50 transition-colors">
-                  <td className="px-4 py-3 font-medium text-slate-900">{record.id}</td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold border border-primary/20">
+                <tr key={record.id}>
+                  <td style={{ fontWeight: '600' }}>{record.id}</td>
+                  <td>
+                    <div className="emp-cell">
+                      <div className="av" style={{ background: 'var(--brand-soft)', color: 'var(--brand)' }}>
                         {record.initials}
                       </div>
-                      <div className="font-semibold text-slate-900">{record.employeeName}</div>
+                      <div>
+                        <div className="e-nm">{record.employeeName}</div>
+                      </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-slate-700">{record.date}</td>
-                  <td className="px-4 py-3 font-semibold text-slate-900">{record.hours}</td>
-                  <td className="px-4 py-3 text-slate-500 max-w-[200px] truncate" title={record.reason}>
+                  <td style={{ color: 'var(--ink-2)' }}>{record.date}</td>
+                  <td style={{ fontWeight: '700' }}>{record.hours}</td>
+                  <td style={{ color: 'var(--ink-2)', maxWidth: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={record.reason}>
                     {record.reason}
                   </td>
-                  <td className="px-4 py-3">
+                  <td>
                     <StatusBadge status={record.status} />
                   </td>
-                  <td className="px-4 py-3 text-right">
+                  <td>
                     {record.status === 'Pending' ? (
-                      <div className="flex items-center justify-end gap-2">
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px' }}>
                         <button 
                           onClick={() => handleApprove(record.id)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-500 hover:text-white rounded-md text-xs font-bold transition-colors shadow-sm"
+                          className="btn"
+                          style={{ padding: '6px 12px', background: 'var(--sage-soft)', color: 'var(--sage)', borderRadius: '8px', fontSize: '11px' }}
                         >
                           <Check size={14} /> Approve
                         </button>
                         <button 
                           onClick={() => handleReject(record.id)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-500 hover:text-white rounded-md text-xs font-bold transition-colors shadow-sm"
+                          className="btn ghost"
+                          style={{ padding: '6px 12px', borderRadius: '8px', fontSize: '11px', color: 'var(--coral)' }}
                         >
                           <X size={14} /> Reject
                         </button>
                       </div>
                     ) : (
-                      <button className="flex items-center justify-end gap-1.5 px-4 py-1.5 text-slate-600 hover:text-primary bg-slate-50 border border-slate-200 hover:border-primary/30 rounded-md text-xs font-bold transition-colors shadow-sm ml-auto">
-                        <Eye size={14} /> View
-                      </button>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px' }}>
+                        <button className="btn ghost" style={{ padding: '6px 12px', borderRadius: '8px', fontSize: '11px' }}>
+                          <Eye size={14} /> View
+                        </button>
+                      </div>
                     )}
                   </td>
                 </tr>
@@ -158,7 +156,7 @@ export default function Overtime() {
           </table>
           
           {overtimeRequests.length === 0 && (
-            <div className="p-12 text-center text-slate-500">
+            <div className="empty">
               No overtime requests found.
             </div>
           )}
@@ -170,19 +168,22 @@ export default function Overtime() {
 }
 
 function StatusBadge({ status }) {
-  let colorClass = 'bg-slate-100 text-slate-600 border-slate-200';
+  let pillClass = 'pill gray';
   
   if (status === 'Pending') {
-    colorClass = 'bg-amber-50 text-amber-700 border-amber-200';
+    pillClass = 'pill brand';
   } else if (status === 'Approved') {
-    colorClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+    pillClass = 'pill green';
   } else if (status === 'Rejected') {
-    colorClass = 'bg-rose-50 text-rose-700 border-rose-200';
+    pillClass = 'pill coral';
   }
 
   return (
-    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border ${colorClass}`}>
+    <span className={pillClass}>
       {status}
     </span>
   );
 }
+
+
+

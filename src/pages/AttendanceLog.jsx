@@ -3,9 +3,13 @@ import {
   Download, Search, Calendar as CalendarIcon, 
   ChevronDown, Edit2, ChevronLeft, ChevronRight, Filter
 } from 'lucide-react';
+import ExportModal from '../components/ExportModal';
+import UpdateAttendanceModal from '../components/UpdateAttendanceModal';
 
 export default function AttendanceLog() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   
   const attendanceData = [
     {
@@ -55,16 +59,14 @@ export default function AttendanceLog() {
   ];
 
   return (
-    <div className="stagger">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <ExportModal isOpen={isExportModalOpen} onClose={() => setIsExportModalOpen(false)} />
+      <UpdateAttendanceModal isOpen={isUpdateModalOpen} onClose={() => setIsUpdateModalOpen(false)} />
       
       {/* 1. Page Title & Action Bar */}
-      <div className="sec-head">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Attendance Log</h1>
-          <p className="text-sm text-slate-500 mt-1">Track and manage daily attendance records for all employees.</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <button className="btn ghost">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '16px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button className="btn primary" onClick={() => setIsExportModalOpen(true)}>
             <Download size={16} />
             Export Report
           </button>
@@ -72,52 +74,51 @@ export default function AttendanceLog() {
       </div>
 
       {/* 3. Attendance Ledger Table Container */}
-      <div className="panel">
+      <div className="panel" style={{ display: 'flex', flexDirection: 'column', padding: 0 }}>
         
         {/* 2. Advanced Filtering Control Bar */}
-        <div className="p-4 border-b border-slate-100 flex flex-col lg:flex-row gap-4 items-center justify-between bg-slate-50/30">
+        <div style={{ padding: '16px', borderBottom: '1px solid var(--line)', display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'center', justifyContent: 'space-between' }}>
           
           {/* Search */}
-          <div className="relative w-full lg:max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+          <div className="search" style={{ margin: 0 }}>
+            <Search size={16} />
             <input 
               type="text" 
               placeholder="Search employee or ID..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-primary/50 transition-colors shadow-sm"
             />
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '12px' }}>
             
             {/* Date Picker Tool */}
-            <div className="relative flex-1 sm:flex-none">
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+            <div style={{ position: 'relative' }}>
+              <div style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--ink-3)' }}>
                 <CalendarIcon size={16} />
               </div>
               <input 
                 type="text" 
                 defaultValue="23-May-2026"
-                className="w-full sm:w-40 pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 focus:outline-none focus:border-primary/50 transition-colors shadow-sm cursor-pointer"
+                className="glass-ctrl"
+                style={{ width: '160px', paddingLeft: '36px', paddingRight: '14px', paddingTop: '10px', paddingBottom: '10px' }}
                 readOnly
               />
             </div>
 
             {/* Department Dropdown */}
-            <div className="relative flex-1 sm:flex-none min-w-[160px]">
-              <select className="w-full appearance-none px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 focus:outline-none focus:border-primary/50 transition-colors shadow-sm cursor-pointer">
+            <div style={{ position: 'relative' }}>
+              <select className="glass-ctrl" style={{ minWidth: '160px', padding: '10px 32px 10px 14px' }}>
                 <option>All Departments</option>
                 <option>Information Technology</option>
                 <option>Creative & Design</option>
                 <option>Management</option>
               </select>
-              <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
             </div>
 
             {/* Status Filter Dropdown */}
-            <div className="relative flex-1 sm:flex-none min-w-[140px]">
-              <select className="w-full appearance-none px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 focus:outline-none focus:border-primary/50 transition-colors shadow-sm cursor-pointer">
+            <div style={{ position: 'relative' }}>
+              <select className="glass-ctrl" style={{ minWidth: '140px', padding: '10px 32px 10px 14px' }}>
                 <option>All Status</option>
                 <option>Present</option>
                 <option>Late</option>
@@ -126,54 +127,57 @@ export default function AttendanceLog() {
                 <option>Half Day</option>
                 <option>On Leave</option>
               </select>
-              <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
             </div>
 
           </div>
         </div>
 
         {/* 3. Ledger Table Content */}
-        <div className="w-full">
-          <table className="w-full text-left text-sm text-slate-600">
-            <thead >
+        <div style={{ width: '100%', overflowX: 'auto' }}>
+          <table>
+            <thead>
               <tr>
-                <th className="px-4 py-3">Name</th>
-                <th className="px-4 py-3">Date</th>
-                <th className="px-4 py-3">Mark In</th>
-                <th className="px-4 py-3">Mark Out</th>
-                <th className="px-4 py-3">Working Hours</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3 text-center">Actions</th>
+                <th>Name</th>
+                <th>Date</th>
+                <th>Mark In</th>
+                <th>Mark Out</th>
+                <th>Working Hours</th>
+                <th>Status</th>
+                <th style={{ textAlign: 'center' }}>Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody>
               {attendanceData.map((record) => (
-                <tr key={record.id} className="hover:bg-slate-50/50 transition-colors">
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-3">
-                      <img src={record.avatar} alt={record.name} className="w-10 h-10 rounded-lg object-cover border border-slate-200 shadow-sm" />
+                <tr key={record.id}>
+                  <td>
+                    <div className="emp-cell">
+                      <img src={record.avatar} alt={record.name} style={{ width: '36px', height: '36px', borderRadius: '50%', objectFit: 'cover' }} />
                       <div>
-                        <div className="font-bold text-slate-900">{record.name}</div>
-                        <div className="text-[11px] text-slate-500 font-medium mt-0.5">{record.systemId}</div>
+                        <div className="e-nm">{record.name}</div>
+                        <div className="e-rl">{record.systemId}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3 font-medium text-slate-700">{record.date}</td>
-                  <td className="px-4 py-3">
-                    <span className={record.markIn === '--:--' ? 'text-slate-400' : 'font-medium text-slate-700'}>{record.markIn}</span>
+                  <td>{record.date}</td>
+                  <td>
+                    <span style={{ color: record.markIn === '--:--' ? 'var(--ink-3)' : 'var(--ink)', fontWeight: record.markIn === '--:--' ? '500' : '700' }}>{record.markIn}</span>
                   </td>
-                  <td className="px-4 py-3">
-                    <span className={record.markOut === '--:--' ? 'text-slate-400' : 'font-medium text-slate-700'}>{record.markOut}</span>
+                  <td>
+                    <span style={{ color: record.markOut === '--:--' ? 'var(--ink-3)' : 'var(--ink)', fontWeight: record.markOut === '--:--' ? '500' : '700' }}>{record.markOut}</span>
                   </td>
-                  <td className="px-4 py-3">
-                    <span className={record.workingHours === '-' ? 'text-slate-400' : 'font-bold text-slate-900'}>{record.workingHours}</span>
+                  <td>
+                    <span style={{ color: record.workingHours === '-' ? 'var(--ink-3)' : 'var(--ink)', fontWeight: record.workingHours === '-' ? '500' : '800' }}>{record.workingHours}</span>
                   </td>
-                  <td className="px-4 py-3">
+                  <td>
                     <StatusBadge status={record.status} />
                   </td>
-                  <td className="px-4 py-3 text-center">
-                    <button className="p-2 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors mx-auto block">
-                      <Edit2 size={16} />
+                  <td style={{ textAlign: 'center' }}>
+                    <button 
+                      className="btn primary" 
+                      onClick={() => setIsUpdateModalOpen(true)}
+                      style={{ margin: '0 auto', width: '32px', height: '32px', padding: 0, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    >
+                      <Edit2 size={14} />
                     </button>
                   </td>
                 </tr>
@@ -183,19 +187,19 @@ export default function AttendanceLog() {
         </div>
 
         {/* 4. Table Pagination & Ledger Footer */}
-        <div className="p-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-500 bg-slate-50/30">
+        <div style={{ padding: '16px', borderTop: '1px solid var(--line)', display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'center', justifyContent: 'space-between', fontSize: '13px', color: 'var(--ink-3)' }}>
           <div>
-            Showing <span className="font-medium text-slate-900">1</span> to <span className="font-medium text-slate-900">{attendanceData.length}</span> of <span className="font-medium text-slate-900">{attendanceData.length}</span>
+            Showing <span style={{ fontWeight: 'bold', color: 'var(--ink)' }}>1</span> to <span style={{ fontWeight: 'bold', color: 'var(--ink)' }}>{attendanceData.length}</span> of <span style={{ fontWeight: 'bold', color: 'var(--ink)' }}>{attendanceData.length}</span>
           </div>
-          <div className="flex items-center gap-4">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-slate-600 hover:text-slate-900 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <button className="btn ghost" disabled style={{ padding: '8px 12px', opacity: 0.5 }}>
               <ChevronLeft size={16} />
               Previous
             </button>
-            <div className="font-bold text-slate-900 bg-white px-3 py-1.5 border border-slate-200 rounded-lg shadow-sm">
+            <div className="btn ghost" style={{ padding: '8px 12px', pointerEvents: 'none' }}>
               1 / 1
             </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-slate-600 hover:text-slate-900 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+            <button className="btn ghost" disabled style={{ padding: '8px 12px', opacity: 0.5 }}>
               Next
               <ChevronRight size={16} />
             </button>
@@ -207,23 +211,26 @@ export default function AttendanceLog() {
 }
 
 function StatusBadge({ status }) {
-  let colorClass = 'bg-slate-100 text-slate-600 border-slate-200';
+  let pillClass = 'pill gray';
   
   if (status === 'Present') {
-    colorClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+    pillClass = 'pill green';
   } else if (status === 'Late') {
-    colorClass = 'bg-amber-50 text-amber-700 border-amber-200';
+    pillClass = 'pill gold';
   } else if (status === 'Absent') {
-    colorClass = 'bg-rose-50 text-rose-700 border-rose-200';
+    pillClass = 'pill coral';
   } else if (status === 'On Leave' || status === 'WFH') {
-    colorClass = 'bg-primary/10 text-primary border-primary/20';
+    pillClass = 'pill sky';
   } else if (status === 'Half Day') {
-    colorClass = 'bg-purple-50 text-purple-700 border-purple-200';
+    pillClass = 'pill brand';
   }
 
   return (
-    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border ${colorClass}`}>
+    <span className={pillClass}>
       {status}
     </span>
   );
 }
+
+
+

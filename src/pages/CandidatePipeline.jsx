@@ -39,26 +39,20 @@ export default function CandidatePipeline() {
   }, []);
 
   return (
-    <div className="stagger">
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', gap: '24px' }}>
       
-      {/* 1. Page Title & Action Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 shrink-0">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Candidate Pipeline</h1>
-          <p className="text-sm text-slate-500 mt-1">Track and manage active applicants across recruitment stages.</p>
-        </div>
-      </div>
+
 
       {/* Pipeline Board Workspace */}
-      <div className="flex-1 overflow-hidden relative flex">
+      <div style={{ flex: 1, position: 'relative', display: 'flex', overflow: 'hidden' }}>
         {isLoading ? (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/50 rounded-2xl border border-slate-100 backdrop-blur-sm z-10">
-            <Loader2 className="w-10 h-10 text-primary animate-spin mb-4" />
-            <h2 className="text-lg font-bold text-slate-900">Ingesting Pipeline Data...</h2>
-            <p className="text-sm text-slate-500">Fetching active applicant profiles and stages.</p>
+          <div className="panel" style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 10 }}>
+            <Loader2 size={40} style={{ color: 'var(--brand)', animation: 'spin 1s linear infinite', marginBottom: '16px' }} />
+            <h2 style={{ fontSize: '18px', fontWeight: 'bold', color: 'var(--ink)', marginBottom: '4px' }}>Ingesting Pipeline Data...</h2>
+            <p style={{ fontSize: '13px', color: 'var(--ink-3)' }}>Fetching active applicant profiles and stages.</p>
           </div>
         ) : (
-          <div className="flex-1 overflow-x-auto hide-scrollbar flex gap-6 pb-4">
+          <div className="kanban" style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '16px', flex: 1, alignItems: 'flex-start' }}>
             
             {/* KanBan Stage Columns */}
             {Object.keys(pipelineData).map((stage) => (
@@ -69,45 +63,36 @@ export default function CandidatePipeline() {
         )}
       </div>
 
+      <style>{`
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        .kanban::-webkit-scrollbar { height: 8px; }
+        .kanban::-webkit-scrollbar-thumb { background: var(--line); border-radius: 8px; }
+        .kanban-col-scroll::-webkit-scrollbar { width: 4px; }
+        .kanban-col-scroll::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
+      `}</style>
     </div>
   );
 }
 
 function KanbanColumn({ title, count, candidates }) {
-  // Map stage to specific colors
-  const getStageColor = (stage) => {
-    switch(stage) {
-      case 'Applied': return 'bg-slate-200 text-slate-700';
-      case 'Screening': return 'bg-amber-100 text-amber-700';
-      case 'Interview': return 'bg-primary/20 text-primary';
-      case 'Offered': return 'bg-purple-100 text-purple-700';
-      case 'Hired': return 'bg-emerald-100 text-emerald-700';
-      default: return 'bg-slate-100 text-slate-700';
-    }
-  };
-
   return (
-    <div className="w-80 shrink-0 flex flex-col bg-slate-50 rounded-2xl border border-slate-200/60 max-h-full">
+    <div className="kcol" style={{ flex: '0 0 310px', display: 'flex', flexDirection: 'column', maxHeight: '100%' }}>
       {/* Column Header */}
-      <div className="p-4 flex items-center justify-between border-b border-slate-200/60 shrink-0">
-        <div className="flex items-center gap-2">
-          <h3 className="font-bold text-slate-800">{title}</h3>
-          <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${getStageColor(title)}`}>
-            {count}
-          </span>
-        </div>
-        <button className="text-slate-400 hover:text-slate-700 transition-colors">
-          <MoreHorizontal size={18} />
-        </button>
+      <div className="kh">
+        <h4 style={{ color: 'var(--ink)' }}>{title}</h4>
+        <span className="cnt">{count}</span>
       </div>
 
       {/* Candidate Cards Container */}
-      <div className="p-3 flex-1 overflow-y-auto space-y-3">
+      <div className="kanban-col-scroll" style={{ overflowY: 'auto', paddingRight: '4px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {candidates.map(candidate => (
           <CandidateCard key={candidate.id} candidate={candidate} />
         ))}
         {candidates.length === 0 && (
-          <div className="text-center py-8 text-sm text-slate-400 font-medium border-2 border-dashed border-slate-200 rounded-xl">
+          <div style={{ textAlign: 'center', padding: '32px 0', fontSize: '12px', color: 'var(--ink-3)', border: '2px dashed var(--line)', borderRadius: '12px', fontWeight: '600' }}>
             Drop candidate here
           </div>
         )}
@@ -118,47 +103,47 @@ function KanbanColumn({ title, count, candidates }) {
 
 function CandidateCard({ candidate }) {
   return (
-    <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 hover:border-primary/40 hover:shadow-md transition-all cursor-grab active:cursor-grabbing group">
+    <div className="kcard group" style={{ margin: 0 }}>
       
       {/* Top row: Avatar & Actions */}
-      <div className="flex justify-between items-start mb-3">
-        <div className="flex gap-3">
-          <img src={candidate.avatar} alt={candidate.name} className="w-10 h-10 rounded-full object-cover border border-slate-100 shadow-sm" />
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <img src={candidate.avatar} alt={candidate.name} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
           <div>
-            <h4 className="font-bold text-slate-900 text-sm leading-tight mb-1">{candidate.name}</h4>
-            <p className="text-xs font-medium text-primary bg-primary/5 px-2 py-0.5 rounded-md inline-block">{candidate.role}</p>
+            <div className="kt" style={{ margin: '0 0 2px 0', color: 'var(--ink)', lineHeight: '1.2' }}>{candidate.name}</div>
+            <div className="kr" style={{ margin: 0, color: 'var(--brand)', fontWeight: '600', fontSize: '11px' }}>{candidate.role}</div>
           </div>
         </div>
-        <button className="text-slate-300 hover:text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity">
+        <button style={{ background: 'none', border: 'none', color: 'var(--ink-3)', cursor: 'pointer', padding: '4px' }}>
           <MoreHorizontal size={16} />
         </button>
       </div>
 
       {/* Rating */}
-      <div className="flex gap-1 mb-4">
+      <div style={{ display: 'flex', gap: '4px', marginBottom: '16px' }}>
         {[...Array(5)].map((_, i) => (
           <Star 
             key={i} 
             size={12} 
-            className={i < candidate.rating ? "text-amber-400 fill-amber-400" : "text-slate-200"} 
+            style={{ color: i < candidate.rating ? 'var(--gold)' : 'var(--line)', fill: i < candidate.rating ? 'var(--gold)' : 'transparent' }} 
           />
         ))}
       </div>
 
       {/* Bottom row: Meta stats */}
-      <div className="flex items-center justify-between text-xs font-medium text-slate-500 pt-3 border-t border-slate-50">
-        <div className="flex items-center gap-1.5">
-          <Calendar size={14} className="text-slate-400" />
+      <div className="kf" style={{ borderTop: '1px solid var(--line-2)', paddingTop: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: 'var(--ink-3)', fontWeight: '600' }}>
+          <Calendar size={13} />
           {candidate.date}
         </div>
         
-        <div className="flex gap-3">
-          <div className="flex items-center gap-1">
-            <MessageSquare size={14} className="text-slate-400" />
+        <div style={{ display: 'flex', gap: '12px', fontSize: '11px', color: 'var(--ink-3)', fontWeight: '600' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <MessageSquare size={13} />
             {candidate.comments}
           </div>
-          <div className="flex items-center gap-1">
-            <Paperclip size={14} className="text-slate-400" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <Paperclip size={13} />
             {candidate.files}
           </div>
         </div>

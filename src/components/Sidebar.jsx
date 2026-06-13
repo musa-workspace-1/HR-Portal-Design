@@ -1,120 +1,145 @@
 import React from 'react';
-import Icon from './Icon';
+import { Home, Users, Clock, Briefcase, DollarSign, ChevronDown, Sun } from 'lucide-react';
 
 export default function Sidebar({ currentPage, setCurrentPage, activeDropdown, toggleDropdown }) {
   return (
-    <aside className="sidebar">
+    <div className="sidebar">
+
       <div className="brand">
         <div className="logo">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.1" strokeLinecap="round">
-            <path d="M4.5 12c0-2 1.6-3.6 3.6-3.6 1.6 0 2.6 1.1 3.4 2.5l1 1.8c.8 1.4 1.8 2.5 3.4 2.5 2 0 3.6-1.6 3.6-3.6S21.4 8 19.4 8c-1.6 0-2.6 1.1-3.4 2.5l-1 1.8C14.2 13.7 13.2 14.8 11.6 14.8 9.6 14.8 8 13.2 8 11.2"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="23" height="23"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
         </div>
-        <h1>24 loops</h1>
+        <h1>HR Portal</h1>
       </div>
-      
+
       <div className="nav-scroll">
-        <div className="nav-label">Main Menu</div>
+
+        
         <NavItem 
-          icon="dashboard" 
+          icon={<Home size={19} />} 
           label="Dashboard" 
           active={currentPage === 'dashboard'} 
           onClick={() => { setCurrentPage('dashboard'); toggleDropdown(null); }} 
         />
-        <NavItem 
-          icon="employees" 
-          label="Employees" 
-          active={currentPage === 'employee-directory' || currentPage === 'team'} 
-          onClick={() => { setCurrentPage('employee-directory'); toggleDropdown('staff'); }} 
-        />
-        <NavItem 
-          icon="attendance" 
-          label="Attendance" 
-          active={currentPage === 'attendance-dashboard' || currentPage === 'attendance-log' || currentPage === 'shift' || currentPage === 'overtime'} 
-          onClick={() => { setCurrentPage('attendance-dashboard'); toggleDropdown('time'); }} 
-        />
-        <NavItem 
-          icon="leave" 
-          label={<span>Leave <span className="badge">3</span></span>}
-          active={currentPage === 'leave'} 
-          onClick={() => { setCurrentPage('leave'); toggleDropdown('time'); }} 
-        />
-        <NavItem 
-          icon="spark" 
-          label={<span>AI Hub <span className="ai-badge">AI</span></span>}
-          active={currentPage === 'aihub'} 
-          onClick={() => { setCurrentPage('aihub'); toggleDropdown(null); }} 
-        />
+        
 
-        <div className="nav-label">Team Management</div>
-        <NavItem 
-          icon="recruitment" 
-          label="Recruitment" 
-          active={currentPage === 'recruitment-dashboard' || currentPage === 'candidate-pipeline' || currentPage === 'interviews' || currentPage === 'offer-letters'} 
-          onClick={() => { setCurrentPage('recruitment-dashboard'); toggleDropdown('hiring'); }} 
-        />
-        <NavItem 
-          icon="onboarding" 
-          label="Onboarding" 
-          active={currentPage === 'onboarding' || currentPage === 'offboarding'} 
-          onClick={() => { setCurrentPage('onboarding'); toggleDropdown('staff'); }} 
-        />
-        <NavItem 
-          icon="performance" 
-          label="Performance" 
-          active={currentPage === 'performance'} 
-          onClick={() => { setCurrentPage('performance'); toggleDropdown(null); }} 
-        />
-        <NavItem 
-          icon="payroll" 
-          label="Payroll" 
-          active={currentPage === 'payroll-dashboard' || currentPage === 'salary-structure'} 
-          onClick={() => { setCurrentPage('payroll-dashboard'); toggleDropdown('payroll'); }} 
-        />
-        <NavItem 
-          icon="expenses" 
-          label="Expenses" 
-          active={currentPage === 'expenses'} 
-          onClick={() => { setCurrentPage('expenses'); toggleDropdown(null); }} 
-        />
 
-        <div className="nav-label">Workspace</div>
-        <NavItem 
-          icon="documents" 
-          label="Documents" 
-          active={currentPage === 'documents'} 
-          onClick={() => { setCurrentPage('documents'); toggleDropdown(null); }} 
-        />
-        <NavItem 
-          icon="announcements" 
-          label="Announcements" 
-          active={currentPage === 'announcements'} 
-          onClick={() => { setCurrentPage('announcements'); toggleDropdown(null); }} 
-        />
-        <NavItem 
-          icon="settings" 
-          label="Settings" 
-          active={currentPage === 'settings' || currentPage === 'profile'} 
-          onClick={() => { setCurrentPage('settings'); toggleDropdown(null); }} 
-        />
-      </div>
-
-      <div className="side-foot">
-        <div className="ai-promo">
-          <div className="spark">✦</div>
-          <h4>Loop AI Assistant</h4>
-          <p>Just chat — Loop AI can add people, book leave & more.</p>
-          <button>Open Assistant</button>
+        <div className="flex flex-col">
+          <div 
+            onClick={() => toggleDropdown('staff')}
+            className={`nav-item ${['employee-directory', 'onboarding', 'offboarding', 'team'].includes(currentPage) ? 'active' : ''}`}
+          >
+            <Users size={19} />
+            <span style={{flex: 1}}>Staff & Lifecycle</span>
+            <ChevronDown size={16} className={`transition-transform duration-200 ${activeDropdown === 'staff' ? 'rotate-180' : ''}`} style={{opacity: 0.5}} />
+          </div>
+          
+          {activeDropdown === 'staff' && (
+            <div style={{ paddingLeft: '32px', marginBottom: '8px' }}>
+              <SubNavItem label="Employee Directory" active={currentPage === 'employee-directory'} onClick={() => setCurrentPage('employee-directory')} />
+              <SubNavItem label="Onboarding" active={currentPage === 'onboarding'} onClick={() => setCurrentPage('onboarding')} />
+              <SubNavItem label="Offboarding" active={currentPage === 'offboarding'} onClick={() => setCurrentPage('offboarding')} />
+              <SubNavItem label="Team" active={currentPage === 'team'} onClick={() => setCurrentPage('team')} />
+            </div>
+          )}
         </div>
+
+        <div className="flex flex-col">
+          <div 
+            onClick={() => toggleDropdown('time')}
+            className={`nav-item ${['attendance-dashboard', 'attendance-log', 'shift', 'overtime', 'leave'].includes(currentPage) ? 'active' : ''}`}
+          >
+            <Clock size={19} />
+            <span style={{flex: 1}}>Time & Attendance</span>
+            <ChevronDown size={16} className={`transition-transform duration-200 ${activeDropdown === 'time' ? 'rotate-180' : ''}`} style={{opacity: 0.5}} />
+          </div>
+          
+          {activeDropdown === 'time' && (
+            <div style={{ paddingLeft: '32px', marginBottom: '8px' }}>
+              <SubNavItem label="Attendance Dashboard" active={currentPage === 'attendance-dashboard'} onClick={() => setCurrentPage('attendance-dashboard')} />
+              <SubNavItem label="Attendance Log" active={currentPage === 'attendance-log'} onClick={() => setCurrentPage('attendance-log')} />
+              <SubNavItem label="Shift" active={currentPage === 'shift'} onClick={() => setCurrentPage('shift')} />
+              <SubNavItem label="Overtime" active={currentPage === 'overtime'} onClick={() => setCurrentPage('overtime')} />
+              <SubNavItem label="Leave" active={currentPage === 'leave'} onClick={() => setCurrentPage('leave')} />
+            </div>
+          )}
+        </div>
+
+        <div className="flex flex-col">
+          <div 
+            onClick={() => toggleDropdown('hiring')}
+            className={`nav-item ${['recruitment-dashboard', 'candidate-pipeline', 'interviews', 'offer-letters'].includes(currentPage) ? 'active' : ''}`}
+          >
+            <Briefcase size={19} />
+            <span style={{flex: 1}}>Hiring</span>
+            <ChevronDown size={16} className={`transition-transform duration-200 ${activeDropdown === 'hiring' ? 'rotate-180' : ''}`} style={{opacity: 0.5}} />
+          </div>
+          
+          {activeDropdown === 'hiring' && (
+            <div style={{ paddingLeft: '32px', marginBottom: '8px' }}>
+              <SubNavItem label="Recruitment Dashboard" active={currentPage === 'recruitment-dashboard'} onClick={() => setCurrentPage('recruitment-dashboard')} />
+              <SubNavItem label="Candidate Pipeline" active={currentPage === 'candidate-pipeline'} onClick={() => setCurrentPage('candidate-pipeline')} />
+              <SubNavItem label="Interviews" active={currentPage === 'interviews'} onClick={() => setCurrentPage('interviews')} />
+              <SubNavItem label="Offer Letters" active={currentPage === 'offer-letters'} onClick={() => setCurrentPage('offer-letters')} />
+            </div>
+          )}
+        </div>
+
+        <div className="flex flex-col">
+          <div 
+            onClick={() => toggleDropdown('payroll')}
+            className={`nav-item ${['payroll-dashboard', 'salary-structure'].includes(currentPage) ? 'active' : ''}`}
+          >
+            <DollarSign size={19} />
+            <span style={{flex: 1}}>Payroll</span>
+            <ChevronDown size={16} className={`transition-transform duration-200 ${activeDropdown === 'payroll' ? 'rotate-180' : ''}`} style={{opacity: 0.5}} />
+          </div>
+          
+          {activeDropdown === 'payroll' && (
+            <div style={{ paddingLeft: '32px', marginBottom: '8px' }}>
+              <SubNavItem label="Payroll Dashboard" active={currentPage === 'payroll-dashboard'} onClick={() => setCurrentPage('payroll-dashboard')} />
+              <SubNavItem label="Salary Structure" active={currentPage === 'salary-structure'} onClick={() => setCurrentPage('salary-structure')} />
+            </div>
+          )}
+        </div>
+
+        <NavItem 
+          icon={<Sun size={19} />} 
+          label={
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+              <span>AI Hub</span>
+              <span className="pill" style={{ background: '#bd7942', color: '#fff', fontSize: '9px', padding: '2px 6px' }}>AI</span>
+            </div>
+          } 
+          active={currentPage === 'ai-hub'} 
+          onClick={() => { setCurrentPage('ai-hub'); toggleDropdown(null); }} 
+        />
       </div>
-    </aside>
+
+
+
+    </div>
   );
 }
 
 function NavItem({ icon, label, active, onClick }) {
   return (
-    <div className={`nav-item ${active ? 'active' : ''}`} onClick={onClick}>
-      <Icon name={icon} /> {label}
+    <div onClick={onClick} className={`nav-item ${active ? 'active' : ''}`}>
+      {icon}
+      <span>{label}</span>
+    </div>
+  );
+}
+
+function SubNavItem({ label, active, onClick }) {
+  return (
+    <div 
+      onClick={onClick} 
+      className={`nav-item ${active ? 'active' : ''}`}
+      style={{ padding: '8px 12px', fontSize: '12.5px', marginBottom: '2px' }}
+    >
+      <span style={{ width: '5px', height: '5px', borderRadius: '50%', backgroundColor: active ? 'var(--brand)' : 'var(--ink-3)', opacity: active ? 1 : 0.4 }}></span>
+      {label}
     </div>
   );
 }

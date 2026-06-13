@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Topbar from './components/Topbar';
-import MobileNav from './components/MobileNav';
+import AiDrawer from './components/AiDrawer';
+
 
 import Dashboard from './pages/Dashboard';
 import EmployeeDirectory from './pages/EmployeeDirectory';
@@ -23,11 +24,37 @@ import Notifications from './pages/Notifications';
 import Settings from './pages/Settings';
 import Profile from './pages/Profile';
 import Help from './pages/Help';
+import AiHub from './pages/AiHub';
+import OnboardingDetail from './pages/OnboardingDetail';
+import OffboardingDetail from './pages/OffboardingDetail';
+// AI Assistant Button component
+const AIAssistantBtn = ({ onClick }) => {
+  return (
+    <button className="ai-fab" onClick={onClick} title="Ask Loop AI">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/>
+        <circle cx="12" cy="12" r="3.2"/>
+      </svg>
+    </button>
+  );
+};
 
 function App() {
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [directoryView, setDirectoryView] = useState('list');
+  const [isAiOpen, setIsAiOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [selectedOnboardingEmployee, setSelectedOnboardingEmployee] = useState(null);
+  const [selectedOffboardingEmployee, setSelectedOffboardingEmployee] = useState(null);
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  }, [isDarkMode]);
 
   const navigateToPage = (page) => {
     setCurrentPage(page);
@@ -106,6 +133,7 @@ function App() {
 
   return (
     <div className="app">
+      
       <Sidebar 
         currentPage={currentPage} 
         setCurrentPage={navigateToPage} 
@@ -120,43 +148,46 @@ function App() {
           notifications={notifications} 
           markAllNotificationsAsRead={markAllNotificationsAsRead} 
           markNotificationAsRead={markNotificationAsRead} 
+          isDarkMode={isDarkMode}
+          toggleDarkMode={() => setIsDarkMode(!isDarkMode)}
         />
 
-        <div className="content" id="content">
-          <div className="view active">
-            {currentPage === 'dashboard' && <Dashboard setCurrentPage={navigateToPage} setDirectoryView={setDirectoryView} />}
-            {currentPage === 'employee-directory' && <EmployeeDirectory view={directoryView} setView={setDirectoryView} />}
-            {currentPage === 'onboarding' && <Onboarding />}
-            {currentPage === 'offboarding' && <Offboarding />}
-            {currentPage === 'team' && <Team />}
-            {currentPage === 'attendance-dashboard' && <AttendanceDashboard />}
-            {currentPage === 'attendance-log' && <AttendanceLog />}
-            {currentPage === 'shift' && <Shift />}
-            {currentPage === 'overtime' && <Overtime />}
-            {currentPage === 'leave' && <Leave />}
-            {currentPage === 'recruitment-dashboard' && <RecruitmentDashboard />}
-            {currentPage === 'candidate-pipeline' && <CandidatePipeline />}
-            {currentPage === 'interviews' && <Interviews />}
-            {currentPage === 'offer-letters' && <OfferLetters />}
-            {currentPage === 'payroll-dashboard' && <PayrollDashboard />}
-            {currentPage === 'salary-structure' && <SalaryStructure />}
-            {currentPage === 'notifications' && (
-              <Notifications 
-                notifications={notifications} 
-                markAllNotificationsAsRead={markAllNotificationsAsRead} 
-                markNotificationAsRead={markNotificationAsRead}
-                deleteNotification={deleteNotification}
-              />
-            )}
-            {currentPage === 'settings' && <Settings />}
-            {currentPage === 'profile' && <Profile />}
-            {currentPage === 'help' && <Help />}
-          </div>
+        <div className="content">
+          {currentPage === 'dashboard' && <Dashboard setCurrentPage={navigateToPage} setDirectoryView={setDirectoryView} />}
+          {currentPage === 'employee-directory' && <EmployeeDirectory view={directoryView} setView={setDirectoryView} />}
+          {currentPage === 'onboarding' && <Onboarding setCurrentPage={navigateToPage} onSelectEmployee={setSelectedOnboardingEmployee} />}
+          {currentPage === 'onboarding-detail' && <OnboardingDetail setCurrentPage={navigateToPage} employee={selectedOnboardingEmployee} />}
+          {currentPage === 'offboarding' && <Offboarding setCurrentPage={navigateToPage} onSelectEmployee={setSelectedOffboardingEmployee} />}
+          {currentPage === 'offboarding-detail' && <OffboardingDetail setCurrentPage={navigateToPage} employee={selectedOffboardingEmployee} />}
+          {currentPage === 'team' && <Team />}
+          {currentPage === 'attendance-dashboard' && <AttendanceDashboard />}
+          {currentPage === 'attendance-log' && <AttendanceLog />}
+          {currentPage === 'shift' && <Shift />}
+          {currentPage === 'overtime' && <Overtime />}
+          {currentPage === 'leave' && <Leave />}
+          {currentPage === 'recruitment-dashboard' && <RecruitmentDashboard />}
+          {currentPage === 'candidate-pipeline' && <CandidatePipeline />}
+          {currentPage === 'interviews' && <Interviews />}
+          {currentPage === 'offer-letters' && <OfferLetters />}
+          {currentPage === 'payroll-dashboard' && <PayrollDashboard />}
+          {currentPage === 'salary-structure' && <SalaryStructure />}
+          {currentPage === 'notifications' && (
+            <Notifications 
+              notifications={notifications} 
+              markAllNotificationsAsRead={markAllNotificationsAsRead} 
+              markNotificationAsRead={markNotificationAsRead}
+              deleteNotification={deleteNotification}
+            />
+          )}
+          {currentPage === 'settings' && <Settings />}
+          {currentPage === 'profile' && <Profile />}
+          {currentPage === 'help' && <Help />}
+          {currentPage === 'ai-hub' && <AiHub setIsAiOpen={setIsAiOpen} />}
         </div>
       </div>
 
-      <MobileNav currentPage={currentPage} setCurrentPage={navigateToPage} />
-
+      <AIAssistantBtn onClick={() => setIsAiOpen(true)} />
+      <AiDrawer isOpen={isAiOpen} onClose={() => setIsAiOpen(false)} />
     </div>
   );
 }

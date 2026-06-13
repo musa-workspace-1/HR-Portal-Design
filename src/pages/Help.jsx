@@ -73,49 +73,52 @@ export default function Help() {
   ];
 
   return (
-    <div className="stagger">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', position: 'relative' }}>
       
       {/* Toast Alert */}
       {showToast && (
-        <div className="fixed top-20 right-4 z-50 flex items-center gap-3 bg-emerald-600 text-white px-4 py-3 rounded-xl shadow-lg border border-emerald-500 animate-in fade-in slide-in-from-top-4 duration-300">
+        <div style={{ position: 'fixed', top: '80px', right: '16px', zIndex: 50, display: 'flex', alignItems: 'center', gap: '12px', background: 'var(--sage)', color: 'var(--surface)', padding: '12px 16px', borderRadius: '12px', boxShadow: 'var(--shadow)' }}>
           <CheckCircle2 size={20} />
-          <span className="text-sm font-semibold">{toastMessage}</span>
+          <span style={{ fontSize: '14px', fontWeight: '600' }}>{toastMessage}</span>
         </div>
       )}
 
       {/* 1. Hero Search & Popular Tags */}
-      <div className="bg-gradient-to-br from-primary to-blue-950 text-white rounded-3xl p-8 sm:p-12 text-center shadow-lg relative overflow-hidden">
+      <div style={{ background: 'linear-gradient(160deg, var(--dark), var(--dark-2))', color: '#fff', borderRadius: '24px', padding: '48px 32px', textAlign: 'center', overflow: 'hidden', position: 'relative', boxShadow: '0 18px 50px -18px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.14), inset 0 0 0 1px rgba(255,255,255,0.04)' }}>
         
         {/* Background Visual Accents */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/[0.03] rounded-full translate-x-20 -translate-y-20 pointer-events-none" />
-        <div className="absolute -bottom-10 left-10 w-44 h-44 bg-primary-light/[0.05] rounded-full pointer-events-none" />
+        <div style={{ position: 'absolute', top: 0, right: 0, width: '256px', height: '256px', background: 'rgba(255,255,255,0.02)', borderRadius: '50%', transform: 'translate(80px, -80px)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: '-40px', left: '40px', width: '176px', height: '176px', background: 'rgba(255,255,255,0.02)', borderRadius: '50%', pointerEvents: 'none' }} />
 
-        <div className="relative z-10 max-w-2xl mx-auto space-y-6">
-          <div className="space-y-2">
-            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">How can we help you?</h1>
-            <p className="text-slate-200 text-xs sm:text-sm">Search our documentation database or browse popular categories below.</p>
+        <div style={{ position: 'relative', zIndex: 10, maxWidth: '600px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div>
+            <h1 style={{ fontSize: '36px', fontWeight: '800', margin: '0 0 8px 0', letterSpacing: '-0.5px' }}>How can we help you?</h1>
+            <p style={{ fontSize: '14px', opacity: 0.6, margin: 0 }}>Search our documentation database or browse popular categories below.</p>
           </div>
 
           {/* Search Box */}
-          <div className="relative max-w-xl mx-auto">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+          <div style={{ margin: '0 auto', width: '100%', maxWidth: '500px', padding: '16px 20px', borderRadius: '16px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', display: 'flex', alignItems: 'center', gap: '12px', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.2)' }}>
+            <Search size={20} style={{ color: 'rgba(255,255,255,0.4)' }} />
             <input 
               type="text" 
               placeholder="Search guides, policies, or questions..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 sm:py-3.5 bg-white text-slate-900 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-md placeholder-slate-400"
+              style={{ width: '100%', border: 'none', background: 'transparent', outline: 'none', fontSize: '14px', color: '#fff' }}
+              className="hero-search-input"
             />
           </div>
 
           {/* Popular Tags */}
-          <div className="flex flex-wrap items-center justify-center gap-2 text-xs">
-            <span className="text-slate-300 font-semibold">Popular Topics:</span>
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '8px', fontSize: '12px' }}>
+            <span style={{ fontWeight: '600', opacity: 0.6 }}>Popular Topics:</span>
             {['Leave', 'Payslip', 'Attendance'].map((tag) => (
               <button 
                 key={tag}
                 onClick={() => setSearchQuery(tag)}
-                className="px-3 py-1 bg-white/10 hover:bg-white/20 text-white font-bold rounded-lg transition-colors cursor-pointer"
+                style={{ padding: '6px 14px', background: 'rgba(255,255,255,0.08)', color: '#fff', fontWeight: 'bold', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', transition: '0.2s' }}
+                onMouseOver={(e) => e.target.style.background = 'rgba(255,255,255,0.15)'}
+                onMouseOut={(e) => e.target.style.background = 'rgba(255,255,255,0.08)'}
               >
                 {tag}
               </button>
@@ -123,7 +126,7 @@ export default function Help() {
             {searchQuery && (
               <button 
                 onClick={() => setSearchQuery('')}
-                className="px-2 py-1 bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 font-bold rounded-lg transition-colors cursor-pointer"
+                style={{ padding: '6px 14px', background: 'var(--coral)', color: '#fff', fontWeight: 'bold', borderRadius: '8px', border: 'none', cursor: 'pointer' }}
               >
                 Clear Filter
               </button>
@@ -133,59 +136,71 @@ export default function Help() {
       </div>
 
       {/* 2. Knowledge Base Categories */}
-      <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
         <CategoryCard 
           icon={<BookOpen size={24} />} 
           title="Member Guide" 
           description="Covers the baseline fundamentals of navigating and using the HR portal." 
-          color="bg-blue-50 text-blue-600"
+          color="var(--sky)"
         />
         <CategoryCard 
           icon={<DollarSign size={24} />} 
           title="Payroll & Taxes" 
           description="Dedicated repository for decoding monthly payslips and local tax deductions." 
-          color="bg-emerald-50 text-emerald-600"
+          color="var(--sage)"
         />
         <CategoryCard 
           icon={<Shield size={24} />} 
           title="Security" 
           description="Documentation on managing individual account privacy, credentials, and system permissions." 
-          color="bg-purple-50 text-purple-600"
+          color="var(--gold)"
         />
         <CategoryCard 
           icon={<FileText size={24} />} 
           title="Knowledge Base" 
           description="Direct access portal to browse the full, unrestricted documentation library." 
-          color="bg-amber-50 text-amber-600"
+          color="var(--brand)"
         />
       </div>
 
       {/* 3. Curated Documentation */}
-      <div className="grid">
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '24px', alignItems: 'start' }}>
         
         {/* Popular Articles */}
-        <div className="lg:col-span-6 space-y-4">
-          <h2 className="text-base font-bold text-slate-900 tracking-wide uppercase">Popular Articles</h2>
+        <div style={{ flex: '1 1 400px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div className="sec-head" style={{ border: 'none', padding: 0 }}>
+            <h3>Popular Articles</h3>
+          </div>
           
-          <div className="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden divide-y divide-slate-50">
+          <div className="panel" style={{ padding: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             {filteredArticles.length === 0 ? (
-              <div className="p-8 text-center text-sm text-slate-400">
+              <div style={{ padding: '32px', textAlign: 'center', fontSize: '13px', color: 'var(--ink-3)' }}>
                 No articles found matching "{searchQuery}"
               </div>
             ) : (
-              filteredArticles.map((art) => (
+              filteredArticles.map((art, idx) => (
                 <div 
                   key={art.id} 
                   onClick={() => triggerToast(`Opening: ${art.title}`)}
-                  className="p-4 hover:bg-slate-50/50 cursor-pointer transition-colors flex items-center justify-between gap-4"
+                  className="group"
+                  style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center', 
+                    gap: '16px', 
+                    padding: '16px 20px', 
+                    borderBottom: idx === filteredArticles.length - 1 ? 'none' : '1px solid var(--line)',
+                    cursor: 'pointer',
+                    transition: '0.2s'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.background = 'var(--surface-2)'}
+                  onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
                 >
-                  <div className="min-w-0">
-                    <h3 className="text-sm font-semibold text-slate-800 hover:text-primary transition-colors truncate">{art.title}</h3>
-                    <p className="text-[10px] sm:text-xs text-slate-400 font-medium mt-1">
-                      {art.readTime}
-                    </p>
+                  <div style={{ minWidth: 0 }}>
+                    <div className="dt" style={{ fontSize: '14px', fontWeight: '700', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', transition: 'color 0.2s', color: 'var(--ink)' }}>{art.title}</div>
+                    <div style={{ marginTop: '4px', fontSize: '12px', color: 'var(--ink-3)' }}>{art.readTime}</div>
                   </div>
-                  <span className="text-[9px] font-extrabold px-2 py-0.5 rounded-md bg-slate-100 text-slate-500 flex-shrink-0">
+                  <span style={{ fontSize: '10px', fontWeight: '800', padding: '4px 8px', borderRadius: '8px', background: 'var(--surface-2)', color: 'var(--ink-2)', flexShrink: 0, border: '1px solid var(--line)' }}>
                     {art.tag}
                   </span>
                 </div>
@@ -195,29 +210,33 @@ export default function Help() {
         </div>
 
         {/* FAQs Accordion */}
-        <div className="lg:col-span-6 space-y-4">
-          <h2 className="text-base font-bold text-slate-900 tracking-wide uppercase">Frequently Asked Questions</h2>
+        <div style={{ flex: '1 1 400px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div className="sec-head" style={{ border: 'none', padding: 0 }}>
+            <h3>Frequently Asked Questions</h3>
+          </div>
           
-          <div className="space-y-3">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {faqs.map((faq, idx) => (
-              <div key={idx} className="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden">
+              <div key={idx} className="panel" style={{ padding: 0, overflow: 'hidden' }}>
                 <button
                   onClick={() => toggleFaq(idx)}
-                  className="w-full px-5 py-4 text-left flex justify-between items-center gap-4 hover:bg-slate-50/30 transition-colors cursor-pointer"
+                  style={{ width: '100%', padding: '16px 20px', textAlign: 'left', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', background: 'transparent', border: 'none', cursor: 'pointer', transition: '0.2s' }}
+                  onMouseOver={(e) => e.currentTarget.style.background = 'var(--surface-2)'}
+                  onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
                 >
-                  <span className="text-xs sm:text-sm font-semibold text-slate-800">{faq.question}</span>
+                  <span style={{ fontSize: '14px', fontWeight: '700', color: 'var(--ink)' }}>{faq.question}</span>
                   {expandedFaq === idx ? (
-                    <ChevronUp size={16} className="text-slate-400 flex-shrink-0" />
+                    <ChevronUp size={16} style={{ color: 'var(--brand)', flexShrink: 0 }} />
                   ) : (
-                    <ChevronDown size={16} className="text-slate-400 flex-shrink-0" />
+                    <ChevronDown size={16} style={{ color: 'var(--ink-3)', flexShrink: 0 }} />
                   )}
                 </button>
 
                 {expandedFaq === idx && (
-                  <div className="px-5 pb-5 pt-1 border-t border-slate-50 bg-slate-50/[0.15]">
-                    <ol className="list-decimal pl-4 space-y-2 text-xs text-slate-550 leading-relaxed">
+                  <div style={{ padding: '0 20px 20px 20px', borderTop: '1px solid var(--line)', background: 'var(--surface-2)', paddingTop: '16px' }}>
+                    <ol style={{ paddingLeft: '16px', margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px', color: 'var(--ink-2)', lineHeight: '1.6' }}>
                       {faq.steps.map((step, sIdx) => (
-                        <li key={sIdx} className="pl-1">
+                        <li key={sIdx} style={{ paddingLeft: '4px' }}>
                           {step}
                         </li>
                       ))}
@@ -232,32 +251,31 @@ export default function Help() {
       </div>
 
       {/* 4. Direct Assistance Channels */}
-      <div className="bg-slate-900 text-slate-100 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-md relative overflow-hidden border border-slate-850">
-        {/* Visual Background Accent */}
-        <div className="absolute right-0 top-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl pointer-events-none" />
-        
-        <div className="space-y-2.5 max-w-md">
-          <h3 className="text-lg font-bold text-slate-100">Still need help?</h3>
-          <p className="text-xs text-slate-400 leading-relaxed">
+      <div className="panel" style={{ background: 'var(--surface-2)', color: 'var(--ink)', borderRadius: '24px', padding: '32px', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '24px', position: 'relative', overflow: 'hidden', border: '1px solid var(--line)' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxWidth: '400px', position: 'relative', zIndex: 2 }}>
+          <h3 style={{ fontSize: '18px', fontWeight: 'bold' }}>Still need help?</h3>
+          <p style={{ fontSize: '13px', color: 'var(--ink-2)', lineHeight: '1.6', margin: 0 }}>
             Can't find the answers you're looking for? Reach out directly to our live administrative support channels.
           </p>
-          <div className="inline-flex items-center gap-1.5 px-2 py-1 bg-emerald-500/15 border border-emerald-500/20 text-emerald-400 rounded-lg text-[10px] font-bold">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span>24/7 Support: 5 min average response time</span>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: 'var(--surface)', borderRadius: '8px', fontSize: '11px', fontWeight: 'bold', width: 'fit-content', marginTop: '4px', border: '1px solid var(--line)' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--sage)' }} />
+            <span style={{ color: 'var(--ink)' }}>24/7 Support: 5 min average response time</span>
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', position: 'relative', zIndex: 2 }}>
           <button 
             onClick={() => triggerToast('Launching Live Chat with support representative...')}
-            className="flex items-center justify-center gap-2 px-5 py-3 bg-primary hover:opacity-90 text-white rounded-xl text-xs font-bold transition-all shadow-sm shadow-primary/15 cursor-pointer"
+            className="btn"
+            style={{ background: 'var(--brand)', color: 'var(--surface)', border: 'none', padding: '12px 20px', borderRadius: '12px' }}
           >
             <MessageSquare size={16} />
             Start Live Chat
           </button>
           <button 
             onClick={() => triggerToast('Redirecting to help desk email client...')}
-            className="flex items-center justify-center gap-2 px-5 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer"
+            className="btn ghost"
+            style={{ background: 'var(--surface)', color: 'var(--ink)', border: '1px solid var(--line)', padding: '12px 20px', borderRadius: '12px' }}
           >
             <Mail size={16} />
             Contact via Email
@@ -266,42 +284,50 @@ export default function Help() {
       </div>
 
       {/* 5. Quick Links Footer */}
-      <div className="border-t border-slate-100 pt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-slate-400 font-medium">
+      <div style={{ borderTop: '1px solid var(--line)', paddingTop: '24px', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '16px', fontSize: '13px', color: 'var(--ink-3)', fontWeight: '600' }}>
         <span>&copy; 2026 24Loops HR. All rights reserved.</span>
         
-        <div className="grid">
-          <a href="#tutorials" onClick={(e) => { e.preventDefault(); triggerToast('Redirecting to Video Tutorials...'); }} className="flex items-center gap-1.5 hover:text-primary transition-colors">
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '24px' }}>
+          <a href="#tutorials" onClick={(e) => { e.preventDefault(); triggerToast('Redirecting to Video Tutorials...'); }} style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'inherit', textDecoration: 'none', transition: '0.2s' }} onMouseOver={e => e.currentTarget.style.color = 'var(--brand)'} onMouseOut={e => e.currentTarget.style.color = 'inherit'}>
             <Video size={14} />
             <span>Video Tutorials</span>
           </a>
-          <a href="#api" onClick={(e) => { e.preventDefault(); triggerToast('Opening API Developer Documentation...'); }} className="flex items-center gap-1.5 hover:text-primary transition-colors">
+          <a href="#api" onClick={(e) => { e.preventDefault(); triggerToast('Opening API Developer Documentation...'); }} style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'inherit', textDecoration: 'none', transition: '0.2s' }} onMouseOver={e => e.currentTarget.style.color = 'var(--brand)'} onMouseOut={e => e.currentTarget.style.color = 'inherit'}>
             <Terminal size={14} />
             <span>API Documentation</span>
           </a>
-          <a href="#status" onClick={(e) => { e.preventDefault(); triggerToast('Viewing infrastructure System Status...'); }} className="flex items-center gap-1.5 hover:text-primary transition-colors">
+          <a href="#status" onClick={(e) => { e.preventDefault(); triggerToast('Viewing infrastructure System Status...'); }} style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'inherit', textDecoration: 'none', transition: '0.2s' }} onMouseOver={e => e.currentTarget.style.color = 'var(--brand)'} onMouseOut={e => e.currentTarget.style.color = 'inherit'}>
             <Activity size={14} />
             <span>System Status</span>
           </a>
-          <a href="#community" onClick={(e) => { e.preventDefault(); triggerToast('Connecting to Community Forums...'); }} className="flex items-center gap-1.5 hover:text-primary transition-colors">
+          <a href="#community" onClick={(e) => { e.preventDefault(); triggerToast('Connecting to Community Forums...'); }} style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'inherit', textDecoration: 'none', transition: '0.2s' }} onMouseOver={e => e.currentTarget.style.color = 'var(--brand)'} onMouseOut={e => e.currentTarget.style.color = 'inherit'}>
             <Users size={14} />
             <span>Community Forum</span>
           </a>
         </div>
       </div>
 
+      <style>{`
+        .hero-search-input::placeholder { color: rgba(255,255,255,0.4); }
+        .group:hover .dt { color: var(--brand) !important; }
+        .help-card-hover { transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s; }
+        .help-card-hover:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--brand-soft) !important; }
+        .help-card-title { transition: color 0.2s; }
+        .help-card-hover:hover .help-card-title { color: var(--brand) !important; }
+      `}</style>
     </div>
   );
 }
 
 function CategoryCard({ icon, title, description, color }) {
   return (
-    <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-350 flex flex-col gap-3 group cursor-pointer hover:border-primary/20">
-      <div className={`p-3 rounded-xl w-fit ${color}`}>
+    <div className="card help-card-hover" style={{ flex: '1 1 200px', display: 'flex', flexDirection: 'column', gap: '14px', cursor: 'pointer', padding: '24px' }}>
+      <div style={{ color: color, padding: '12px', borderRadius: '14px', background: 'var(--surface-2)', width: 'fit-content' }}>
         {icon}
       </div>
-      <div className="space-y-1">
-        <h3 className="font-bold text-slate-900 text-sm group-hover:text-primary transition-colors">{title}</h3>
-        <p className="text-slate-500 text-xs leading-normal">{description}</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        <h3 className="help-card-title" style={{ fontSize: '15px', fontWeight: '800', color: 'var(--ink)' }}>{title}</h3>
+        <p style={{ fontSize: '13px', color: 'var(--ink-2)', lineHeight: '1.5', margin: 0 }}>{description}</p>
       </div>
     </div>
   );

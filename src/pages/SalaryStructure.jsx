@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { 
   Plus, Search, ChevronDown, Edit2
 } from 'lucide-react';
+import CreateSalaryStructureModal from '../components/CreateSalaryStructureModal';
 
 export default function SalaryStructure() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   
   const [componentsData, setComponentsData] = useState([
     {
@@ -40,7 +42,7 @@ export default function SalaryStructure() {
       type: 'Deduction',
       calcType: 'Fixed',
       defaultValue: 'Slab-based',
-      taxable: '—',
+      taxable: 'â€”',
       status: 'Active',
     },
     {
@@ -49,106 +51,99 @@ export default function SalaryStructure() {
       type: 'Deduction',
       calcType: 'Percentage',
       defaultValue: '8% of Basic',
-      taxable: '—',
+      taxable: 'â€”',
       status: 'Inactive',
     },
   ]);
 
   return (
-    <div className="stagger">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <CreateSalaryStructureModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} />
       
       {/* 1. Page Title & Action Bar */}
-      <div className="sec-head">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Salary Structure</h1>
-          <p className="text-sm text-slate-500 mt-1">Define and manage organizational earning and withholding rules.</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:opacity-90 transition-colors shadow-sm">
+      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'flex-end', gap: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button className="btn primary" onClick={() => setIsAddModalOpen(true)}>
             <Plus size={16} />
             Add Component
           </button>
         </div>
       </div>
 
-      <div className="panel">
+      <div className="panel" style={{ padding: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         
         {/* 2. Global Query & Parameter Filtering */}
-        <div className="p-4 border-b border-slate-100 flex flex-col lg:flex-row gap-4 items-center justify-between bg-slate-50/30">
+        <div style={{ padding: '20px', borderBottom: '1px solid var(--line)', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '16px', background: 'var(--surface-2)' }}>
           
-          <div className="relative w-full lg:max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+          <div className="search" style={{ margin: 0, width: '100%', maxWidth: '300px' }}>
+            <Search />
             <input 
               type="text" 
               placeholder="Search components..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-primary/50 transition-colors shadow-sm"
             />
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '12px' }}>
             {/* Type Filter */}
-            <div className="relative flex-1 sm:flex-none min-w-[140px]">
-              <select className="w-full appearance-none px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 focus:outline-none focus:border-primary/50 transition-colors shadow-sm cursor-pointer">
+            <div style={{ position: 'relative', minWidth: '140px', margin: 0 }} className="field">
+              <select className="glass-ctrl" style={{ width: '100%', margin: 0 }}>
                 <option>All Types</option>
                 <option>Allowance</option>
                 <option>Deduction</option>
               </select>
-              <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
             </div>
 
             {/* Status Filter */}
-            <div className="relative flex-1 sm:flex-none min-w-[140px]">
-              <select className="w-full appearance-none px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 focus:outline-none focus:border-primary/50 transition-colors shadow-sm cursor-pointer">
+            <div style={{ position: 'relative', minWidth: '140px', margin: 0 }} className="field">
+              <select className="glass-ctrl" style={{ width: '100%', margin: 0 }}>
                 <option>All Statuses</option>
                 <option>Active</option>
                 <option>Inactive</option>
               </select>
-              <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
             </div>
           </div>
 
         </div>
 
         {/* 3. Salary Components Ledger & Variable Metrics */}
-        <div className="w-full">
-          <table className="w-full text-left text-sm text-slate-600">
-            <thead >
+        <div style={{ width: '100%', overflowX: 'auto' }}>
+          <table>
+            <thead>
               <tr>
-                <th className="px-4 py-3">Component Name</th>
-                <th className="px-4 py-3">Type</th>
-                <th className="px-4 py-3">Calculation Type</th>
-                <th className="px-4 py-3">Default Value</th>
-                <th className="px-4 py-3">Taxable</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3 text-right">Actions</th>
+                <th style={{ paddingTop: '24px' }}>Component Name</th>
+                <th style={{ paddingTop: '24px' }}>Type</th>
+                <th style={{ paddingTop: '24px' }}>Calculation Type</th>
+                <th style={{ paddingTop: '24px' }}>Default Value</th>
+                <th style={{ paddingTop: '24px' }}>Taxable</th>
+                <th style={{ paddingTop: '24px' }}>Status</th>
+                <th style={{ textAlign: 'right', paddingTop: '24px' }}>Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody>
               {componentsData.map((record) => (
-                <tr key={record.id} className="hover:bg-slate-50/50 transition-colors">
-                  <td className="px-4 py-3 font-bold text-slate-900">{record.name}</td>
-                  <td className="px-4 py-3">
-                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] uppercase tracking-wider font-bold ${record.type === 'Allowance' ? 'bg-primary/10 text-primary border border-primary/20' : 'bg-rose-50 text-rose-700 border border-rose-200'}`}>
+                <tr key={record.id}>
+                  <td style={{ fontWeight: '800' }}>{record.name}</td>
+                  <td>
+                    <span className={`pill ${record.type === 'Allowance' ? 'brand' : 'coral'}`}>
                       {record.type}
                     </span>
                   </td>
-                  <td className="px-4 py-3 font-medium text-slate-700">{record.calcType}</td>
-                  <td className="px-4 py-3 font-bold text-slate-900">{record.defaultValue}</td>
-                  <td className="px-4 py-3">
-                    <span className={`font-semibold ${record.taxable === 'Yes' ? 'text-emerald-600' : record.taxable === 'No' ? 'text-slate-400' : 'text-slate-400'}`}>
-                      {record.taxable}
-                    </span>
+                  <td style={{ fontWeight: '600', color: 'var(--ink-2)' }}>{record.calcType}</td>
+                  <td style={{ fontWeight: '800' }}>{record.defaultValue}</td>
+                  <td style={{ fontWeight: '600', color: record.taxable === 'Yes' ? 'var(--sage)' : 'var(--ink-3)' }}>
+                    {record.taxable}
                   </td>
-                  <td className="px-4 py-3">
+                  <td>
                     <StatusBadge status={record.status} />
                   </td>
-                  <td className="px-4 py-3 text-right">
-                    {/* 4. Contextual Inline Action Flows */}
-                    <button className="flex items-center justify-end gap-1.5 px-4 py-1.5 text-slate-600 hover:text-primary bg-slate-50 border border-slate-200 hover:border-primary/30 rounded-md text-xs font-bold transition-colors shadow-sm ml-auto">
-                      <Edit2 size={14} /> Edit
-                    </button>
+                  <td>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px' }}>
+                      <button className="btn primary" style={{ padding: '6px 12px', borderRadius: '8px', fontSize: '11px' }}>
+                        <Edit2 size={14} /> Edit
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -156,7 +151,7 @@ export default function SalaryStructure() {
           </table>
           
           {componentsData.length === 0 && (
-            <div className="p-12 text-center text-slate-500">
+            <div className="empty">
               No salary components found.
             </div>
           )}
@@ -168,17 +163,20 @@ export default function SalaryStructure() {
 }
 
 function StatusBadge({ status }) {
-  let colorClass = 'bg-slate-100 text-slate-600 border-slate-200';
+  let pillClass = 'pill gray';
   
   if (status === 'Active') {
-    colorClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+    pillClass = 'pill green';
   } else if (status === 'Inactive') {
-    colorClass = 'bg-slate-50 text-slate-500 border-slate-200';
+    pillClass = 'pill gray';
   }
 
   return (
-    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border ${colorClass}`}>
+    <span className={pillClass}>
       {status}
     </span>
   );
 }
+
+
+

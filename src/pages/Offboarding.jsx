@@ -1,76 +1,208 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
-  Activity, CheckCircle2, Clock, AlertTriangle, 
-  Layers
+  Users, CheckCircle2, Clock, AlertCircle, 
+  Calendar as CalendarIcon, ArrowRight, Activity, AlertTriangle
 } from 'lucide-react';
 
-export default function Offboarding() {
+export default function Offboarding({ setCurrentPage, onSelectEmployee }) {
+  const [activeTab, setActiveTab] = useState('All');
+
+  const offboardingData = [
+    {
+      id: 1,
+      name: 'Alice Johnson',
+      systemId: '21101-9876543-2',
+      avatar: 'https://i.pravatar.cc/150?u=alice',
+      role: 'Software Engineer',
+      department: 'Engineering',
+      lastDay: '2026-06-09',
+      reason: 'Resignation',
+      status: 'In Progress',
+      progress: 0,
+      stepsCompleted: 0,
+      stepsTotal: 35
+    },
+    {
+      id: 2,
+      name: 'Bob Smith',
+      systemId: '32101-1234567-8',
+      avatar: 'https://i.pravatar.cc/150?u=bob',
+      role: 'Marketing Manager',
+      department: 'Marketing',
+      lastDay: '2026-06-12',
+      reason: 'Resignation',
+      status: 'Not Started',
+      progress: 0,
+      stepsCompleted: 0,
+      stepsTotal: 35
+    }
+  ];
+
+  const StatusBadge = ({ status }) => {
+    switch(status) {
+      case 'Completed': return <span style={{ padding: '4px 10px', background: 'var(--sage-soft)', color: 'var(--sage)', borderRadius: '20px', fontSize: '11px', fontWeight: '700' }}>Completed</span>;
+      case 'In Progress': return <span style={{ padding: '4px 10px', background: 'var(--brand-soft)', color: 'var(--brand)', borderRadius: '20px', fontSize: '11px', fontWeight: '700' }}>In Progress</span>;
+      case 'Not Started': return <span style={{ padding: '4px 10px', background: 'var(--surface-2)', color: 'var(--ink-2)', borderRadius: '20px', fontSize: '11px', fontWeight: '700' }}>Not Started</span>;
+      default: return null;
+    }
+  };
+
   return (
-    <div className="stagger">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       
-      {/* Page Header */}
-      <div className="sec-head">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Offboarding</h1>
-          <p className="text-sm text-slate-500 mt-1">Manage employee exits, equipment returns, and final documentation.</p>
-        </div>
-      </div>
-
       {/* 1. Dynamic Metric Summary Cards */}
-      <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
         <MetricCard 
-          title="Active Workflows" 
-          value="0" 
-          icon={<Activity size={20} className="text-primary" />} 
-          color="bg-primary/10 group-hover:bg-white transition-colors" 
+          title="ACTIVE WORKFLOWS" 
+          value="2" 
+          icon={<Activity size={24} style={{ color: 'var(--brand)' }} />} 
         />
         <MetricCard 
-          title="Completed (Month)" 
+          title="COMPLETED (MONTH)" 
           value="0" 
-          icon={<CheckCircle2 size={20} className="text-emerald-600" />} 
-          color="bg-emerald-50" 
+          icon={<CheckCircle2 size={24} style={{ color: 'var(--sage)' }} />} 
         />
         <MetricCard 
-          title="Pending Steps" 
-          value="0" 
-          icon={<Clock size={20} className="text-amber-600" />} 
-          color="bg-amber-50" 
+          title="PENDING STEPS" 
+          value="70" 
+          icon={<Clock size={24} style={{ color: 'var(--amber)' }} />} 
         />
         <MetricCard 
-          title="Overdue Steps" 
+          title="OVERDUE STEPS" 
           value="0" 
-          icon={<AlertTriangle size={20} className="text-rose-600" />} 
-          color="bg-rose-50 border border-rose-100" 
-          textClass="text-rose-600" 
+          icon={<AlertTriangle size={24} style={{ color: 'var(--coral)' }} />} 
         />
       </div>
 
-      {/* 2. Empty Workspace / Zero-State Component */}
-      <div className="panel">
-        <div className="w-20 h-20 bg-slate-50 rounded-2xl flex items-center justify-center mb-6 border border-slate-100">
-          <Layers size={40} className="text-slate-400" strokeWidth={1.5} />
+      {/* 2. Pipeline Views Control */}
+      <div style={{ display: 'flex', gap: '8px' }}>
+        {['All', 'Not Started', 'In Progress', 'Completed'].map(tab => (
+          <button 
+            key={tab}
+            className={activeTab === tab ? 'btn' : 'btn ghost'}
+            onClick={() => setActiveTab(tab)}
+            style={{ 
+              background: activeTab === tab ? 'var(--surface)' : 'transparent',
+              fontWeight: activeTab === tab ? '700' : '600',
+              color: activeTab === tab ? 'var(--ink)' : 'var(--ink-2)'
+            }}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+
+      {/* 3. Offboarding Data Grid */}
+      <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+            <thead>
+              <tr style={{ background: 'var(--surface-2)', borderBottom: '1px solid var(--line)' }}>
+                <th style={{ padding: '16px 20px', fontSize: '11px', fontWeight: '700', color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Employee</th>
+                <th style={{ padding: '16px 20px', fontSize: '11px', fontWeight: '700', color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Role & Department</th>
+                <th style={{ padding: '16px 20px', fontSize: '11px', fontWeight: '700', color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Last Day</th>
+                <th style={{ padding: '16px 20px', fontSize: '11px', fontWeight: '700', color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Status</th>
+                <th style={{ padding: '16px 20px', fontSize: '11px', fontWeight: '700', color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Progress</th>
+                <th style={{ padding: '16px 20px', fontSize: '11px', fontWeight: '700', color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '0.5px', textAlign: 'center' }}>Steps</th>
+                <th style={{ padding: '16px 20px', fontSize: '11px', fontWeight: '700', color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '0.5px', textAlign: 'right' }}>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {offboardingData.map((employee, index) => (
+                <tr key={employee.id} style={{ borderBottom: index !== offboardingData.length - 1 ? '1px solid var(--line)' : 'none' }}>
+                  
+                  {/* Employee Info */}
+                  <td style={{ padding: '16px 20px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <img src={employee.avatar} alt="avatar" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
+                      <div>
+                        <div style={{ fontWeight: '700', color: 'var(--ink)', fontSize: '14px', marginBottom: '2px' }}>{employee.name}</div>
+                        <div style={{ fontSize: '12px', color: 'var(--ink-3)' }}>{employee.systemId}</div>
+                      </div>
+                    </div>
+                  </td>
+
+                  {/* Role & Dept */}
+                  <td style={{ padding: '16px 20px', fontSize: '14px', color: 'var(--ink)' }}>
+                    <div style={{ fontWeight: '600' }}>{employee.role}</div>
+                    <div style={{ fontSize: '12px', color: 'var(--ink-2)', marginTop: '2px' }}>{employee.department}</div>
+                  </td>
+
+                  {/* Last Day */}
+                  <td style={{ padding: '16px 20px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--ink-2)', fontSize: '14px' }}>
+                      <CalendarIcon size={14} />
+                      <span>{employee.lastDay}</span>
+                    </div>
+                  </td>
+
+                  {/* Status */}
+                  <td style={{ padding: '16px 20px' }}>
+                    <StatusBadge status={employee.status} />
+                  </td>
+
+                  {/* Progress */}
+                  <td style={{ padding: '16px 20px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: '120px' }}>
+                      <div style={{ flex: 1, height: '6px', background: 'var(--surface-2)', borderRadius: '10px', overflow: 'hidden' }}>
+                        <div 
+                          style={{ 
+                            height: '100%', 
+                            borderRadius: '10px', 
+                            background: employee.progress === 100 ? 'var(--sage)' : 'var(--brand)',
+                            width: `${employee.progress}%`,
+                            transition: 'width 0.5s'
+                          }}
+                        ></div>
+                      </div>
+                      <span style={{ fontSize: '12px', fontWeight: '700', color: 'var(--ink)', width: '32px' }}>{employee.progress}%</span>
+                    </div>
+                  </td>
+
+                  {/* Steps */}
+                  <td style={{ padding: '16px 20px', textAlign: 'center', fontWeight: '600', color: 'var(--ink-2)' }}>
+                    <span style={{ color: employee.stepsCompleted === employee.stepsTotal ? 'var(--sage)' : 'inherit' }}>
+                      {employee.stepsCompleted}
+                    </span>
+                    <span style={{ margin: '0 4px', color: 'var(--ink-3)', fontWeight: '400' }}>/</span>
+                    <span style={{ color: 'var(--ink-3)' }}>{employee.stepsTotal}</span>
+                  </td>
+
+                  {/* Action */}
+                  <td style={{ padding: '16px 20px', textAlign: 'right' }}>
+                    <button 
+                      className="btn primary" 
+                      onClick={() => {
+                        if (onSelectEmployee) onSelectEmployee(employee);
+                        if (setCurrentPage) setCurrentPage('offboarding-detail');
+                      }}
+                      style={{ padding: '6px 12px', borderRadius: '8px', fontSize: '11px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                    >
+                      Open
+                      <ArrowRight size={14} style={{ color: 'var(--ink-3)' }} />
+                    </button>
+                  </td>
+
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-        <h2 className="text-lg font-bold text-slate-900 mb-2">No offboarding workflows found</h2>
-        <p className="text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
-          Offboarding workflows will automatically populate here when an employee's status is changed to "Terminated" or "Resigned" in the Employee Directory. 
-          <br /><br />
-          Once triggered, you will be able to track mandatory and optional exit steps such as IT equipment collection, final payroll processing, and exit interviews.
-        </p>
       </div>
       
     </div>
   );
 }
 
-function MetricCard({ title, value, icon, color, textClass }) {
+function MetricCard({ title, value, icon }) {
   return (
-    <div className={`group hover:bg-gradient-to-br hover:from-primary hover:to-blue-950 transition-all duration-300 cursor-pointer hover:shadow-md bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4 ${color.includes('border-rose') ? 'border-rose-100 bg-rose-50/30' : ''}`}>
-      <div className={`p-3 rounded-xl ${color}`}>
-        {icon}
-      </div>
+    <div className="lb-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}>
       <div>
-        <h3 className="text-slate-500 group-hover:text-blue-100 transition-colors text-sm font-medium mb-0.5">{title}</h3>
-        <div className={`text-2xl font-bold ${textClass || 'text-slate-900'} group-hover:text-white transition-colors`}>{value}</div>
+        <div className="lt">{title}</div>
+        <div className="lv">{value}</div>
+      </div>
+      <div style={{ width: '46px', height: '46px', borderRadius: '14px', background: 'var(--surface-2)', display: 'grid', placeItems: 'center', flexShrink: 0, border: '1px solid var(--line)' }}>
+        {icon}
       </div>
     </div>
   );
